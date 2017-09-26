@@ -1,0 +1,18 @@
+{
+  "name": "realcoins-poc",
+  "version": "1.0.0",
+  "description": "Proof of concept for RegulatedToken",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test"
+  },
+  "author": "Bob Remeika",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {
+    "zeppelin-solidity": "^1.2.0"
+  }
+}
