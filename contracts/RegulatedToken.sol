@@ -10,23 +10,13 @@ contract RegulatedToken is MintableToken {
 
   event RegulatorRegistered(address _regulator);
 
-  function RegulatedToken() {
-    owner = msg.sender;
+  function RegulatedToken(address _regulator) {
+    regulator = _regulator;
   }
 
-  function isRegistered() returns (bool) {
+  function isRegulated() returns (bool) {
     return regulator != address(0);
   } 
-
-  // PARANOID: onlyowner
-  function register(address _regulator) returns (bool) {
-    // PARANOID: _addr checks
-    require(msg.sender == owner);
-
-    regulator = _regulator;
-
-    RegulatorRegistered(_regulator);
-  }
 
   function transfer(address _to, uint256 _value) returns (bool) {
     require(regulator != address(0));
