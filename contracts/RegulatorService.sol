@@ -11,7 +11,7 @@ contract RegulatorService is Ownable {
   // TODO: Upgrade solidity and try using Fact key type
   mapping (address => mapping (uint => bool)) store;
 
-  function get(address _address, uint _fact) returns (bool) {
+  function get(address _address, uint _fact) constant returns (bool) {
     return store[_address][_fact];
   }
 
@@ -20,7 +20,7 @@ contract RegulatorService is Ownable {
     store[_address][_fact] = _value;
   }
 
-  function check(address _participant) returns (bool) {
+  function check(address _participant) constant returns (bool) {
     require(_participant != address(0));
 
     return store[_participant][FACT_KYC] &&

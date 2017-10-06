@@ -9,7 +9,7 @@ contract MockRegulatorService is RegulatorService  {
     checkResult = result;
   }
 
-  function check(address _participant) returns (bool) {
+  function check(address _participant) constant returns (bool) {
     return checkResult;
   }
 }

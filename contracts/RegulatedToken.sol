@@ -14,7 +14,7 @@ contract RegulatedToken is MintableToken {
     registry = ServiceRegistry(_registry);
   }
 
-  function isRegulated() returns (bool) {
+  function isRegulated() constant returns (bool) {
     return registry != address(0);
   } 
 
@@ -22,6 +22,7 @@ contract RegulatedToken is MintableToken {
     require(registry != address(0));
 
     var service = RegulatorService(registry.service());
+
     if (!service.check(_to))
       revert();
 
