@@ -1,26 +1,29 @@
 pragma solidity ^0.4.4;
 
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
+import './ServiceRegistry.sol';
 import './RegulatorService.sol';
 
+// PARANOID: Should this really be MintableToken
 contract RegulatedToken is MintableToken {
 
   address public owner;
-  address public regulator;
+  ServiceRegistry public registry;
 
-  event RegulatorRegistered(address _regulator);
-
-  function RegulatedToken(address _regulator) {
-    regulator = _regulator;
+  function RegulatedToken(address _registry) {
+    registry = ServiceRegistry(_registry);
   }
 
   function isRegulated() returns (bool) {
-    return regulator != address(0);
+    return registry != address(0);
   } 
 
   function transfer(address _to, uint256 _value) returns (bool) {
-    require(regulator != address(0));
-    require(RegulatorService(regulator).check(_to));
+    require(registry != address(0));
+
+    var service = RegulatorService(registry.service());
+    if (!service.check(_to))
+      revert();
 
     return super.transfer(_to, _value);
   }
