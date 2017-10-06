@@ -42,7 +42,7 @@ contract('ProxyRegulatorService', async (accounts) => {
     });
 
     it('should allow the owner to replace the service', async () => {
-      proxy.replaceService(newService.address);
+      await proxy.replaceService(newService.address);
       assert.equal(await proxy.service(), newService.address);
     });
 
