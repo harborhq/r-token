@@ -5,11 +5,17 @@ import '../../contracts/RegulatorService.sol';
 contract MockRegulatorService is RegulatorService  {
   bool public checkResult;
 
+  function get(address, uint) constant returns (bool) {
+    return false;
+  }
+
+  function put(address, uint, bool) {}
+
   function setCheckResult(bool result) {
     checkResult = result;
   }
 
-  function check(address _participant) constant returns (bool) {
+  function check(address) constant returns (bool) {
     return checkResult;
   }
 }

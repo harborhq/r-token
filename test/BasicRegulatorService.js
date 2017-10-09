@@ -1,5 +1,5 @@
 var helpers = require("./helpers");
-var RegulatorService = artifacts.require("./RegulatorService.sol");
+var RegulatorService = artifacts.require("./BasicRegulatorService.sol");
 
 const Facts = [
   1, // KYC
