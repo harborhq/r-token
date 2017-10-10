@@ -7,7 +7,7 @@ const Facts = [
   3, // ACCRED
 ]
 
-contract('RegulatorService', async (accounts) => {
+contract('BasicRegulatorService', async (accounts) => {
   let owner, account, service;
 
   beforeEach(async () => {
@@ -50,7 +50,7 @@ contract('RegulatorService', async (accounts) => {
   describe('check', () => {
     it('throws when the participant address is invalid', async () => {
       await helpers.expectThrow(
-        service.check(0)
+        service.check(0, 0, 0, 0)
       );
     });
 
@@ -60,7 +60,7 @@ contract('RegulatorService', async (accounts) => {
           await service.put(account, fact, true);
         });
 
-        assert.isTrue(await service.check.call(account));
+        assert.isTrue(await service.check.call(0, 0, account, 0));
       });
     });
   });

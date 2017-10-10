@@ -1,7 +1,9 @@
-var RegulatedToken = artifacts.require("./RegulatedToken.sol");
-var RegulatorService = artifacts.require("./RegulatorService.sol");
+var RegulatedToken = artifacts.require("./RegulatedToken.sol"),
+    BasicRegulatorService = artifacts.require("./BasicRegulatorService.sol"),
+    TokenRegulatorService = artifacts.require("./TokenRegulatorService.sol");
 
 module.exports = function(deployer) {
   deployer.deploy(RegulatedToken);
-  deployer.deploy(RegulatorService);
+  deployer.deploy(BasicRegulatorService);
+  deployer.deploy(TokenRegulatorService);
 };
