@@ -23,7 +23,7 @@ contract RegulatedToken is MintableToken {
 
     var service = RegulatorService(registry.service());
 
-    if (!service.check(_to))
+    if (!service.check(this, msg.sender, _to, _value))
       revert();
 
     return super.transfer(_to, _value);
