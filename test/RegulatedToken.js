@@ -51,10 +51,10 @@ contract('RegulatedToken', async function(accounts) {
       assert.equal(100, await token.balanceOf.call(owner));
       assert.equal(0, await token.balanceOf.call(receiver));
 
-      // await token.transfer(receiver, 25);
+      await token.transfer(receiver, 25);
 
-      // assert.equal(75, await token.balanceOf.call(owner));
-      // assert.equal(25, await token.balanceOf.call(receiver));
+      assert.equal(75, await token.balanceOf.call(owner));
+      assert.equal(25, await token.balanceOf.call(receiver));
     });
   });
 });

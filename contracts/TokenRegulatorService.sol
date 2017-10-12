@@ -5,25 +5,28 @@ import './RegulatorService.sol';
 
 // PARANOID: Should we exclude the ability to transferOwnership?
 contract TokenRegulatorService is RegulatorService, Ownable {
-  mapping (address => mapping (address => bool)) store;
-
-  function get(address _token, uint256 _fact) constant returns (bool) {
-    // PARANOID: Argument checking?
-    var participant = address(_fact); // PARANOID: Is there a better way to do this?
-
-    return store[_token][participant];
+  struct Settings {
+    bool unlocked;
   }
 
-  // PARANOID: Should onlyOwner be included in a base class
-  function put(address _token, uint256 _fact, bool _value) onlyOwner {
-    // PARANOID: Argument checking?
-    var participant = address(_fact); // PARANOID: Is there a better way to do this?
+  mapping(address => Settings) settings;
+  mapping(address => mapping(address => bool)) participants;
 
-    store[_token][participant] = _value;
+  function lock(address _token) onlyOwner {
+    settings[_token].unlocked = false;
   }
 
-  function check(address _token, address, address _to, uint256) constant returns (bool) {
-    // PARANOID: Argument checking?
-    return store[_token][_to];
+  function unlock(address _token) onlyOwner {
+    settings[_token].unlocked = true;
+  }
+
+  function setParticipation(address _token, address _participant, bool _eligible) onlyOwner {
+    participants[_token][_participant] = _eligible;
+  }
+
+  function check(address _token, address _from, address _to, uint256) constant returns (bool) {
+    return settings[_token].unlocked
+           && participants[_token][_from]
+           && participants[_token][_to];
   }
 }

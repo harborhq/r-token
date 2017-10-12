@@ -1,5 +1,5 @@
 var helpers = require("./helpers");
-var RegulatorService = artifacts.require("./TokenRegulatorService.sol");
+var TokenRegulatorService = artifacts.require("./TokenRegulatorService.sol");
 
 contract('TokenRegulatorService', async (accounts) => {
   let owner, account, token, service;
@@ -9,28 +9,102 @@ contract('TokenRegulatorService', async (accounts) => {
     account = accounts[1];
     token = '0xF433089366899D83a9f26A773D59ec7eCF30355e';
 
-    service = await RegulatorService.new({ from: owner });
+    service = await TokenRegulatorService.new({ from: owner });
   });
 
-  describe('put', async () => {
-    it('should only accept transactions from the owner', async () => {
+  const ownership = (method, producer) => {
+    it(method + ' requires owner permissions', async () => {
+      let [service, ...args] = producer();
+
+      let acct = accounts[accounts.length - 1];
+
+      assert.isTrue(!!acct);
+      assert.isTrue(acct != accounts[0]);
+
       await helpers.expectThrow(
-        service.put(token, account, true, { from: account })
+        service[method](...args, { from: acct })
       );
     });
+  }
 
-    it('stores eligible participants on a per token basis', async () => {
-      assert.isFalse(await service.get.call(token, account));
-      await service.put(token, account, true);
-      assert.isTrue(await service.get.call(token, account));
+  describe('permissions', () => {
+    ownership('lock', () => { return [service, token] });
+    ownership('unlock', () => { return [service, token] });
+    ownership('setParticipation', () => { return [service, token, account, 0] });
+  });
+
+  describe('locking', async () => {
+    beforeEach(async () => {
+      await service.setParticipation(token, owner, true);
+      await service.setParticipation(token, account, true);
+    });
+
+    it('is locked by default', async () => {
+      assert.isFalse(await service.check.call(token, owner, account, 0));
+    });
+
+    it('toggles the ability to trade', async () => {
+      assert.isFalse(await service.check.call(token, owner, account, 0));
+      await service.unlock(token);
+      assert.isTrue(await service.check.call(token, owner, account, 0));
+      await service.lock(token);
+      assert.isFalse(await service.check.call(token, owner, account, 0));
     });
   });
 
-  describe('check', () => {
-    it('returns true if the receiver is eligible', async () => {
-      assert.isFalse(await service.check.call(token, owner, account, 10));
-      await service.put(token, account, true);
-      assert.isTrue(await service.check.call(token, owner, account, 10));
+  describe('participation', async () => {
+    beforeEach(async () => {
+      await service.unlock(token);
+    });
+
+    describe('when both participants are eligible', () => {
+      beforeEach(async () => {
+        await service.setParticipation(token, owner, false);
+        await service.setParticipation(token, account, false);
+        assert.isFalse(await service.check.call(token, owner, account, 0));
+      });
+
+      it('allows trades', async () => {
+        await service.setParticipation(token, owner, true);
+        await service.setParticipation(token, account, true);
+
+        assert.isTrue(await service.check.call(token, owner, account, 0));
+      });
+    });
+
+    describe('when one participant is ineligible', () => {
+      beforeEach(async () => {
+        await service.setParticipation(token, owner, true);
+        await service.setParticipation(token, account, true);
+        assert.isTrue(await service.check.call(token, owner, account, 0));
+      });
+
+      it('prevents trades', async () => {
+        await service.setParticipation(token, owner, true);
+        await service.setParticipation(token, account, false);
+
+        assert.isFalse(await service.check.call(token, owner, account, 0));
+
+        await service.setParticipation(token, owner, false);
+        await service.setParticipation(token, account, true);
+
+        assert.isFalse(await service.check.call(token, owner, account, 0));
+      });
+    });
+
+    describe('when no participants are eligible', () => {
+      beforeEach(async () => {
+        await service.setParticipation(token, owner, true);
+        await service.setParticipation(token, account, true);
+        assert.isTrue(await service.check.call(token, owner, account, 0));
+      });
+
+      it('prevents trades', async () => {
+        await service.setParticipation(token, owner, false);
+        await service.setParticipation(token, account, false);
+
+        assert.isFalse(await service.check.call(token, owner, account, 0));
+      });
     });
   });
 });
