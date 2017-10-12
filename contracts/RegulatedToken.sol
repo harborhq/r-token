@@ -16,21 +16,19 @@ contract RegulatedToken is MintableToken {
 
   function isRegulated() constant returns (bool) {
     return registry != address(0);
-  } 
+  }
 
   function transfer(address _to, uint256 _value) returns (bool) {
-    require(registry != address(0));
-
-    var service = RegulatorService(registry.service());
-
-    if (!service.check(this, msg.sender, _to, _value))
-      revert();
+    require(_service().check(this, msg.sender, _to, _value));
 
     return super.transfer(_to, _value);
   }
 
   function transferFrom(address _from, address _to, uint256 _value) returns (bool) {
-    // require(eligible[_from] && eligible[_to]);
     return super.transferFrom(_from, _to, _value);
+  }
+
+  function _service() private constant returns (RegulatorService) {
+    return RegulatorService(registry.service());
   }
 }
