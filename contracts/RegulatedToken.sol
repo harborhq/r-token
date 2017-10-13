@@ -25,6 +25,8 @@ contract RegulatedToken is MintableToken {
   }
 
   function transferFrom(address _from, address _to, uint256 _value) returns (bool) {
+    require(_service().check(this, _from, _to, _value));
+
     return super.transferFrom(_from, _to, _value);
   }
 
