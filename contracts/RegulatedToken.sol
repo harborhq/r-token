@@ -7,7 +7,6 @@ import './RegulatorService.sol';
 // PARANOID: Should this really be MintableToken
 contract RegulatedToken is MintableToken {
 
-  address public owner;
   ServiceRegistry public registry;
 
   function RegulatedToken(address _registry) {
