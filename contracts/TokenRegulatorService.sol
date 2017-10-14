@@ -11,8 +11,11 @@ contract TokenRegulatorService is RegulatorService, Ownable {
     bool partialTransfers;
   }
 
+  uint8 constant private PERM_SEND = 0x1;
+  uint8 constant private PERM_RECEIVE = 0x2;
+
   mapping(address => Settings) settings;
-  mapping(address => mapping(address => bool)) participants;
+  mapping(address => mapping(address => uint8)) participants;
 
   function lock(address _token) onlyOwner {
     settings[_token].unlocked = false;
@@ -30,14 +33,14 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    settings[_token].partialTransfers = false;
   }
 
-  function setParticipation(address _token, address _participant, bool _eligible) onlyOwner {
-    participants[_token][_participant] = _eligible;
+  function setPermission(address _token, address _participant, uint8 _permission) onlyOwner {
+    participants[_token][_participant] = _permission;
   }
 
   function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool) {
     return settings[_token].unlocked
-           && participants[_token][_from]
-           && participants[_token][_to]
+           && participants[_token][_from] & PERM_SEND > 0
+           && participants[_token][_to] & PERM_RECEIVE > 0
            && (settings[_token].partialTransfers || _amount % 10**_decimals(_token) == 0);
   }
 
