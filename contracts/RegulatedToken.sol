@@ -13,6 +13,10 @@ contract RegulatedToken is MintableToken {
     registry = ServiceRegistry(_registry);
   }
 
+  function decimals() constant returns (uint256) {
+    return 18;
+  }
+
   function isRegulated() constant returns (bool) {
     return registry != address(0);
   }
@@ -29,7 +33,7 @@ contract RegulatedToken is MintableToken {
     return super.transferFrom(_from, _to, _value);
   }
 
-  function _service() private constant returns (RegulatorService) {
+  function _service() constant returns (RegulatorService) {
     return RegulatorService(registry.service());
   }
 }
