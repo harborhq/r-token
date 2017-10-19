@@ -4,35 +4,78 @@ import 'zeppelin-solidity/contracts/token/MintableToken.sol';
 import './ServiceRegistry.sol';
 import './RegulatorService.sol';
 
-// PARANOID: Should this really be MintableToken
+/// @notice An ERC-20 token that has the ability to check for trade validity
 contract RegulatedToken is MintableToken {
 
+  /**
+   * @notice Address of the `ServiceRegistry` that has the location of the
+   *         `RegulatorService` contract responsible for checking trade
+   *         permissions.
+   */
   ServiceRegistry public registry;
 
+  /**
+   * @notice Constructor
+   *
+   * @param _registry Address of `ServiceRegistry` contract
+   */
   function RegulatedToken(address _registry) {
     registry = ServiceRegistry(_registry);
   }
 
+  /**
+   * @notice The max precision for a partial token
+   */
   function decimals() constant returns (uint256) {
     return 18;
   }
 
+  /**
+   * @notice Returns whether or not this token is regulated
+   *
+   * @returns `true` if regulated and `false` if not regulated
+   */
   function isRegulated() constant returns (bool) {
     return registry != address(0);
   }
 
+  /**
+   * @notice ERC-20 overridden function that include logic to check for trade validity.
+   *
+   * @param _to The address of the receiver
+   * @param _value The number of tokens to transfer
+   *
+   * @returns `true` if successful and `false` if unsuccessful
+   */
   function transfer(address _to, uint256 _value) returns (bool) {
     require(_service().check(this, msg.sender, _to, _value));
 
     return super.transfer(_to, _value);
   }
 
+  /**
+   * @notice ERC-20 overridden function that include logic to check for trade validity.
+   *
+   * @param _from The address of the sender
+   * @param _to The address of the receiver
+   * @param _value The number of tokens to transfer
+   *
+   * @returns `true` if successful and `false` if unsuccessful
+   */
   function transferFrom(address _from, address _to, uint256 _value) returns (bool) {
     require(_service().check(this, _from, _to, _value));
 
     return super.transferFrom(_from, _to, _value);
   }
 
+  /**
+   * @notice Retreives the address of the `RegulatorService` that manages this token.
+   *
+   * @dev This function *MUST NOT* memoize the `RegulatorService` address.  This would
+   *      break the ability to upgrade the `RegulatorServuce`.
+   *
+   * @returns The `RegulatorService` that manages this token.
+   */
   function _service() constant returns (RegulatorService) {
     return RegulatorService(registry.service());
   }
