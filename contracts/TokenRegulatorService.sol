@@ -109,7 +109,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    * @param  _from The address of the receiver account
    * @param  _amount The quantity of the token to trade
    *
-   * @returns `true` if the trade should be approved and  `false` if the trade should not be approved
+   * @return `true` if the trade should be approved and  `false` if the trade should not be approved
    */
   function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool) {
     return settings[_token].unlocked
@@ -123,7 +123,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The token address of the managed token
    *
-   * @returns The number of decimals
+   * @return The number of decimals
    */
   function _decimals(address _token) constant private returns (uint256) {
     return RegulatedToken(_token).decimals();
