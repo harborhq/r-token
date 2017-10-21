@@ -12,13 +12,15 @@ contract('TokenRegulatorService', async (accounts) => {
 
   beforeEach(async () => {
     owner = accounts[0];
-    account = accounts[1];
+    admin = accounts[1]
+    account = accounts[2];
+    other = accounts[3];
 
     service = await TokenRegulatorService.new({ from: owner });
     token = await MockRegulatedToken.new();
   });
 
-  const ownership = (method, producer) => {
+  const onlyOwner = (method, producer) => {
     it(method + ' requires owner permissions', async () => {
       let [service, ...args] = producer();
 
@@ -34,11 +36,25 @@ contract('TokenRegulatorService', async (accounts) => {
   }
 
   describe('permissions', () => {
-    ownership('lock', () => { return [service, token.address] });
-    ownership('unlock', () => { return [service, token.address] });
-    ownership('allowPartialTransfers', () => { return [service, token.address] });
-    ownership('disallowPartialTransfers', () => { return [service, token.address] });
-    ownership('setPermission', () => { return [service, token.address, account, 0] });
+    onlyOwner('lock', () => { return [service, token.address] });
+    onlyOwner('unlock', () => { return [service, token.address] });
+    onlyOwner('allowPartialTransfers', () => { return [service, token.address] });
+    onlyOwner('disallowPartialTransfers', () => { return [service, token.address] });
+    onlyOwner('setPermission', () => { return [service, token.address, account, 0] });
+    onlyOwner('transferAdmin', () => { return [service, account] });
+
+    describe('setPermission', () => {
+      beforeEach(async () => {
+        await service.transferAdmin(admin);
+      });
+
+      it('allows admin to invoke', async () => {
+        await service.setPermission.call(0, account, 0, { from: admin });
+        await helpers.expectThrow(
+          service.setPermission.call(0, account, 0, { from: other })
+        );
+      });
+    });
   });
 
   describe('locking', () => {

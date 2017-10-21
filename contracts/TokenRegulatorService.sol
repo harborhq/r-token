@@ -10,6 +10,14 @@ import './RegulatorService.sol';
  */
 contract TokenRegulatorService is RegulatorService, Ownable {
 
+  /**
+   * @dev Throws if called by any account other than the admin
+   */
+  modifier onlyAdmins() {
+    require(msg.sender == admin || msg.sender == owner);
+    _;
+  }
+
   /// @dev Settings that affect token trading at a global level
   struct Settings {
 
@@ -33,11 +41,18 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   /// @dev Permission bits for allowing a participant to receive tokens
   uint8 constant private PERM_RECEIVE = 0x2;
 
+  // @dev Address of the administrator
+  address admin;
+
   /// @notice Permissions that allow/disallow token trades on a per token level
   mapping(address => Settings) settings;
 
   /// @notice Permissions that allow/disallow token trades on a per participant basis
   mapping(address => mapping(address => uint8)) participants;
+
+  function RegulatorService() {
+    admin = msg.sender;
+  }
 
   /**
    * @notice Locks the ability to trade a token
@@ -94,8 +109,19 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    * @param  _participant The address of the trade participant
    * @param  _permission Permission bits to be set
    */
-  function setPermission(address _token, address _participant, uint8 _permission) onlyOwner {
+  function setPermission(address _token, address _participant, uint8 _permission) onlyAdmins {
     participants[_token][_participant] = _permission;
+  }
+
+  /**
+   * @dev Allows the current admin to transfer control of the contract to a newAdmin.
+   *
+   * @param newAdmin The address to transfer ownership to.
+   */
+  function transferAdmin(address newAdmin) onlyOwner {
+    if (newAdmin != address(0)) {
+      admin = newAdmin;
+    }
   }
 
   /**
