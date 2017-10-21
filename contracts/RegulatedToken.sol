@@ -33,7 +33,7 @@ contract RegulatedToken is MintableToken {
   /**
    * @notice Returns whether or not this token is regulated
    *
-   * @returns `true` if regulated and `false` if not regulated
+   * @return `true` if regulated and `false` if not regulated
    */
   function isRegulated() constant returns (bool) {
     return registry != address(0);
@@ -45,7 +45,7 @@ contract RegulatedToken is MintableToken {
    * @param _to The address of the receiver
    * @param _value The number of tokens to transfer
    *
-   * @returns `true` if successful and `false` if unsuccessful
+   * @return `true` if successful and `false` if unsuccessful
    */
   function transfer(address _to, uint256 _value) returns (bool) {
     require(_service().check(this, msg.sender, _to, _value));
@@ -60,7 +60,7 @@ contract RegulatedToken is MintableToken {
    * @param _to The address of the receiver
    * @param _value The number of tokens to transfer
    *
-   * @returns `true` if successful and `false` if unsuccessful
+   * @return `true` if successful and `false` if unsuccessful
    */
   function transferFrom(address _from, address _to, uint256 _value) returns (bool) {
     require(_service().check(this, _from, _to, _value));
@@ -74,7 +74,7 @@ contract RegulatedToken is MintableToken {
    * @dev This function *MUST NOT* memoize the `RegulatorService` address.  This would
    *      break the ability to upgrade the `RegulatorServuce`.
    *
-   * @returns The `RegulatorService` that manages this token.
+   * @return The `RegulatorService` that manages this token.
    */
   function _service() constant returns (RegulatorService) {
     return RegulatorService(registry.service());
