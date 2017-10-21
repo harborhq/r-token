@@ -8,6 +8,11 @@ import './RegulatorService.sol';
 contract RegulatedToken is MintableToken {
 
   /**
+   * @notice Triggered when regulator checks pass or fail
+   */
+  event CheckStatus(bool success);
+
+  /**
    * @notice Address of the `ServiceRegistry` that has the location of the
    *         `RegulatorService` contract responsible for checking trade
    *         permissions.
@@ -48,7 +53,9 @@ contract RegulatedToken is MintableToken {
    * @return `true` if successful and `false` if unsuccessful
    */
   function transfer(address _to, uint256 _value) returns (bool) {
-    require(_service().check(this, msg.sender, _to, _value));
+    if (!_check(msg.sender, _to, _value)) {
+      return false;
+    }
 
     return super.transfer(_to, _value);
   }
@@ -63,9 +70,34 @@ contract RegulatedToken is MintableToken {
    * @return `true` if successful and `false` if unsuccessful
    */
   function transferFrom(address _from, address _to, uint256 _value) returns (bool) {
-    require(_service().check(this, _from, _to, _value));
+    if (!_check(_from, _to, _value)){
+      return false;
+    }
 
     return super.transferFrom(_from, _to, _value);
+  }
+
+  /**
+   * @notice Performs the regulator check
+   *
+   * @dev This method raises a CheckStatus event indicating success or failure of the check
+   *
+   * @param _from The address of the sender
+   * @param _to The address of the receiver
+   * @param _value The number of tokens to transfer
+   *
+   * @return `true` if the check was successful and `false` if unsuccessful
+   */
+  function _check(address _from, address _to, uint256 _value) constant private returns (bool) {
+    if (!_service().check(this, _from, _to, _value)) {
+      CheckStatus(false);
+
+      return false;
+    }
+
+    CheckStatus(true);
+
+    return true;
   }
 
   /**
