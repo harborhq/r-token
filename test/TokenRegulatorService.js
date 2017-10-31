@@ -141,6 +141,20 @@ contract('TokenRegulatorService', async (accounts) => {
       });
     });
 
+    describe('when a participant does not exist', () => {
+      beforeEach(async () => {
+        await service.setPermission(token.address, owner, PERM_SEND | PERM_RECEIVE);
+        await service.setPermission(token.address, account, PERM_SEND | PERM_RECEIVE);
+
+        assert.isTrue(await service.check.call(token.address, owner, account, 0));
+      });
+
+      it('denies trades', async () => {
+        assert.isFalse(await service.check.call(token.address, owner, '0x0', 0));
+        assert.isFalse(await service.check.call(token.address, '0x0', owner, 0));
+      });
+    });
+
     describe('when both participants are eligible', () => {
       beforeEach(async () => {
         await service.setPermission(token.address, owner, PERM_NONE);
