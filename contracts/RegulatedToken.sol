@@ -10,7 +10,7 @@ contract RegulatedToken is MintableToken {
   /**
    * @notice Triggered when regulator checks pass or fail
    */
-  event CheckStatus(bool success);
+  event CheckStatus(bool success, uint reason);
 
   /**
    * @notice Address of the `ServiceRegistry` that has the location of the
@@ -89,15 +89,10 @@ contract RegulatedToken is MintableToken {
    * @return `true` if the check was successful and `false` if unsuccessful
    */
   function _check(address _from, address _to, uint256 _value) constant private returns (bool) {
-    if (!_service().check(this, _from, _to, _value)) {
-      CheckStatus(false);
+    var (result, reason) = _service().check(this, _from, _to, _value);
 
-      return false;
-    }
-
-    CheckStatus(true);
-
-    return true;
+    CheckStatus(result, reason);
+    return result;
   }
 
   /**

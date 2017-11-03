@@ -1,7 +1,8 @@
-var helpers = require("./helpers");
-var RegulatedToken = artifacts.require("./RegulatedToken.sol");
-var ServiceRegistry = artifacts.require("./ServiceRegistry.sol");
-var MockRegulatorService = artifacts.require("../test/helpers/MockRegulatorService.sol");
+const helpers = require("./helpers");
+      RegulatedToken = artifacts.require("./RegulatedToken.sol"),
+      ServiceRegistry = artifacts.require("./ServiceRegistry.sol"),
+      MockRegulatorService = artifacts.require("../test/helpers/MockRegulatorService.sol"),
+      BigNumber = require('bignumber.js');
 
 contract('RegulatedToken', async function(accounts) {
   let regulator, token;
@@ -27,13 +28,25 @@ contract('RegulatedToken', async function(accounts) {
     assert.equal(balances.receiver, (await token.balanceOf.call(receiver)).valueOf());
   }
 
+  const assertCheckStatusEvent = async (event, success, reason) => {
+    return helpers.assertEvent(event, { success, reason: new BigNumber(reason) }, (expected, actual) => {
+        assert.equal(expected.success, actual.success);
+        assert.equal(expected.reason.valueOf(), actual.reason.valueOf());
+    });
+  }
+
+  const checkResult = async (tokenAddress, sender, receiver, amount) => {
+    const status = await regulator.check.call(tokenAddress, sender, receiver, amount);
+    return status[0];
+  }
+
   describe('transfer', () => {
     describe('when the transfer is NOT approved by the regulator', () => {
       beforeEach(async () => {
         await regulator.setCheckResult(false);
 
         assert.isTrue(await token.isRegulated.call());
-        assert.isFalse(await regulator.check.call(token.address, owner, receiver, 0));
+        assert.isFalse(await checkResult(token.address, owner, receiver, 0));
 
         await assertBalances({ owner: 100, receiver: 0 });
       });
@@ -47,7 +60,7 @@ contract('RegulatedToken', async function(accounts) {
         let event = token.CheckStatus();
 
         await token.transfer(receiver, 25);
-        await helpers.assertEvent(event, { success: false });
+        await assertCheckStatusEvent(event, false, 0);
         await assertBalances({ owner: 100, receiver: 0 });
       });
     });
@@ -57,7 +70,7 @@ contract('RegulatedToken', async function(accounts) {
         await regulator.setCheckResult(true);
 
         assert.isTrue(await token.isRegulated.call());
-        assert.isTrue(await regulator.check.call(token.address, owner, receiver, 0));
+        assert.isTrue(await checkResult(token.address, owner, receiver, 0));
 
         await assertBalances({ owner: 100, receiver: 0 });
       });
@@ -73,7 +86,7 @@ contract('RegulatedToken', async function(accounts) {
         let event = token.CheckStatus();
 
         await token.transfer(receiver, 25);
-        await helpers.assertEvent(event, { success: true });
+        await assertCheckStatusEvent(event, true, 0);
         await assertBalances({ owner: 75, receiver: 25 });
       });
     });
@@ -85,7 +98,7 @@ contract('RegulatedToken', async function(accounts) {
         await regulator.setCheckResult(false);
 
         assert.isTrue(await token.isRegulated.call());
-        assert.isFalse(await regulator.check.call(token.address, owner, receiver, 0));
+        assert.isFalse(await checkResult(token.address, owner, receiver, 0));
 
         await token.approve(receiver, 25);
 
@@ -102,7 +115,7 @@ contract('RegulatedToken', async function(accounts) {
 
         await token.transferFrom(owner, receiver, 25);
 
-        await helpers.assertEvent(event, { success: false });
+        await assertCheckStatusEvent(event, false, 0);
         await assertBalances({ owner: 100, receiver: 0 });
       });
     });
@@ -112,7 +125,7 @@ contract('RegulatedToken', async function(accounts) {
         await regulator.setCheckResult(true);
 
         assert.isTrue(await token.isRegulated.call());
-        assert.isTrue(await regulator.check.call(token.address, owner, receiver, 0));
+        assert.isTrue(await checkResult(token.address, owner, receiver, 0));
 
         await token.approve(receiver, 25);
 
@@ -130,7 +143,7 @@ contract('RegulatedToken', async function(accounts) {
         let event = token.CheckStatus();
 
         await token.transferFrom(owner, receiver, 20, { from: receiver });
-        await helpers.assertEvent(event, { success: true });
+        await assertCheckStatusEvent(event, true, 0);
         await assertBalances({ owner: 80, receiver: 20 });
 
         await token.transferFrom(owner, receiver, 5, { from: receiver });

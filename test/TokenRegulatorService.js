@@ -35,6 +35,11 @@ contract('TokenRegulatorService', async (accounts) => {
     });
   }
 
+  const checkResult = async (tokenAddress, sender, receiver, amount) => {
+    const status = await service.check.call(tokenAddress, sender, receiver, amount);
+    return status[0];
+  }
+
   describe('permissions', () => {
     onlyOwner('lock', () => { return [service, token.address] });
     onlyOwner('unlock', () => { return [service, token.address] });
@@ -64,15 +69,15 @@ contract('TokenRegulatorService', async (accounts) => {
     });
 
     it('is locked by default', async () => {
-      assert.isFalse(await service.check.call(token.address, owner, account, 0));
+      assert.isFalse(await checkResult(token.address, owner, account, 0));
     });
 
     it('toggles the ability to trade', async () => {
-      assert.isFalse(await service.check.call(token.address, owner, account, 0));
+      assert.isFalse(await checkResult(token.address, owner, account, 0));
       await service.unlock(token.address);
-      assert.isTrue(await service.check.call(token.address, owner, account, 0));
+      assert.isTrue(await checkResult(token.address, owner, account, 0));
       await service.lock(token.address);
-      assert.isFalse(await service.check.call(token.address, owner, account, 0));
+      assert.isFalse(await checkResult(token.address, owner, account, 0));
     });
   });
 
@@ -90,22 +95,22 @@ contract('TokenRegulatorService', async (accounts) => {
 
       assert.equal(expectedTotalSupply, await token.totalSupply.call());
 
-      assert.isFalse(await service.check.call(token.address, owner, account, 10001111));
+      assert.isFalse(await checkResult(token.address, owner, account, 10001111));
     });
 
     describe('when partial trades are allowed', async () => {
       it('allows fractional trades', async () => {
         await service.allowPartialTransfers(token.address);
-        assert.isTrue(await service.check.call(token.address, owner, account, 10001111));
-        assert.isTrue(await service.check.call(token.address, owner, account, 10000000));
+        assert.isTrue(await checkResult(token.address, owner, account, 10001111));
+        assert.isTrue(await checkResult(token.address, owner, account, 10000000));
       });
     });
 
     describe('when partial trades are NOT allowed', async () => {
       it('does NOT allow fractional trades', async () => {
         await service.disallowPartialTransfers(token.address);
-        assert.isTrue(await service.check.call(token.address, owner, account, 10000000));
-        assert.isFalse(await service.check.call(token.address, owner, account, 10001111));
+        assert.isTrue(await checkResult(token.address, owner, account, 10000000));
+        assert.isFalse(await checkResult(token.address, owner, account, 10001111));
       });
     });
   });
@@ -120,38 +125,38 @@ contract('TokenRegulatorService', async (accounts) => {
         await service.setPermission(token.address, owner, PERM_SEND);
         await service.setPermission(token.address, account, PERM_RECEIVE);
 
-        assert.isTrue(await service.check.call(token.address, owner, account, 0));
+        assert.isTrue(await checkResult(token.address, owner, account, 0));
 
         await service.setPermission(token.address, owner, PERM_RECEIVE);
         await service.setPermission(token.address, account, PERM_RECEIVE);
 
-        assert.isFalse(await service.check.call(token.address, owner, account, 0));
+        assert.isFalse(await checkResult(token.address, owner, account, 0));
       });
 
       it('requires a a receiver to have receive permissions', async () => {
         await service.setPermission(token.address, owner, PERM_SEND);
         await service.setPermission(token.address, account, PERM_RECEIVE);
 
-        assert.isTrue(await service.check.call(token.address, owner, account, 0));
+        assert.isTrue(await checkResult(token.address, owner, account, 0));
 
         await service.setPermission(token.address, owner, PERM_RECEIVE);
         await service.setPermission(token.address, account, PERM_SEND);
 
-        assert.isFalse(await service.check.call(token.address, owner, account, 0));
+        assert.isFalse(await checkResult(token.address, owner, account, 0));
       });
     });
 
     describe('when a participant does not exist', () => {
       beforeEach(async () => {
-        await service.setPermission(token.address, owner, PERM_SEND | PERM_RECEIVE);
-        await service.setPermission(token.address, account, PERM_SEND | PERM_RECEIVE);
+        await service.setPermission(token.address, owner, PERM_TRANSFER);
+        await service.setPermission(token.address, account, PERM_TRANSFER);
 
-        assert.isTrue(await service.check.call(token.address, owner, account, 0));
+        assert.isTrue(await checkResult(token.address, owner, account, 0));
       });
 
       it('denies trades', async () => {
-        assert.isFalse(await service.check.call(token.address, owner, '0x0', 0));
-        assert.isFalse(await service.check.call(token.address, '0x0', owner, 0));
+        assert.isFalse(await checkResult(token.address, owner, '0x0', 0));
+        assert.isFalse(await checkResult(token.address, '0x0', owner, 0));
       });
     });
 
@@ -159,14 +164,14 @@ contract('TokenRegulatorService', async (accounts) => {
       beforeEach(async () => {
         await service.setPermission(token.address, owner, PERM_NONE);
         await service.setPermission(token.address, account, PERM_NONE);
-        assert.isFalse(await service.check.call(token.address, owner, account, 0));
+        assert.isFalse(await checkResult(token.address, owner, account, 0));
       });
 
       it('allows trades', async () => {
         await service.setPermission(token.address, owner, PERM_TRANSFER);
         await service.setPermission(token.address, account, PERM_TRANSFER);
 
-        assert.isTrue(await service.check.call(token.address, owner, account, 0));
+        assert.isTrue(await checkResult(token.address, owner, account, 0));
       });
     });
 
@@ -174,19 +179,19 @@ contract('TokenRegulatorService', async (accounts) => {
       beforeEach(async () => {
         await service.setPermission(token.address, owner, PERM_TRANSFER);
         await service.setPermission(token.address, account, PERM_TRANSFER);
-        assert.isTrue(await service.check.call(token.address, owner, account, 0));
+        assert.isTrue(await checkResult(token.address, owner, account, 0));
       });
 
       it('prevents trades', async () => {
         await service.setPermission(token.address, owner, PERM_TRANSFER);
         await service.setPermission(token.address, account, PERM_NONE);
 
-        assert.isFalse(await service.check.call(token.address, owner, account, 0));
+        assert.isFalse(await checkResult(token.address, owner, account, 0));
 
         await service.setPermission(token.address, owner, PERM_NONE);
         await service.setPermission(token.address, account, PERM_TRANSFER);
 
-        assert.isFalse(await service.check.call(token.address, owner, account, 0));
+        assert.isFalse(await checkResult(token.address, owner, account, 0));
       });
     });
 
@@ -194,14 +199,14 @@ contract('TokenRegulatorService', async (accounts) => {
       beforeEach(async () => {
         await service.setPermission(token.address, owner, PERM_TRANSFER);
         await service.setPermission(token.address, account, PERM_TRANSFER);
-        assert.isTrue(await service.check.call(token.address, owner, account, 0));
+        assert.isTrue(await checkResult(token.address, owner, account, 0));
       });
 
       it('prevents trades', async () => {
         await service.setPermission(token.address, owner, PERM_NONE);
         await service.setPermission(token.address, account, PERM_NONE);
 
-        assert.isFalse(await service.check.call(token.address, owner, account, 0));
+        assert.isFalse(await checkResult(token.address, owner, account, 0));
       });
     });
   });

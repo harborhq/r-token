@@ -137,24 +137,24 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @return `true` if the trade should be approved and  `false` if the trade should not be approved
    */
-  function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool) {
+  function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool, uint) {
     if (!settings[_token].unlocked) {
-      return false;
+      return (false, 1);
     }
 
     if (participants[_token][_from] & PERM_SEND == 0) {
-      return false;
+      return (false, 1);
     }
 
     if (participants[_token][_to] & PERM_RECEIVE == 0) {
-      return false;
+      return (false, 1);
     }
 
     if (!settings[_token].partialTransfers && _amount % 10**_decimals(_token) != 0) {
-      return false;
+      return (false, 1);
     }
 
-    return true;
+    return (true, 0);
   }
 
   /**
