@@ -19,5 +19,5 @@ contract RegulatorService {
    *         should not be approved.  `reason` is the reason code as to why the trade failed if `success` is
    *         `false`.
    */
-  function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool, uint);
+  function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool, uint8);
 }

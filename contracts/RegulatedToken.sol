@@ -10,7 +10,7 @@ contract RegulatedToken is MintableToken {
   /**
    * @notice Triggered when regulator checks pass or fail
    */
-  event CheckStatus(bool success, uint reason);
+  event CheckStatus(bool success, uint8 reason);
 
   /**
    * @notice Address of the `ServiceRegistry` that has the location of the
