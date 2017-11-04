@@ -15,7 +15,9 @@ contract RegulatorService {
    * @param  _from The address of the receiver account
    * @param  _amount The quantity of the token to trade
    *
-   * @return `true` if the trade should be approved and  `false` if the trade should not be approved
+   * @return (success, reason) `success` is `true` if the trade should be approved and  `false` if the trade
+   *         should not be approved.  `reason` is the reason code as to why the trade failed if `success` is
+   *         `false`.
    */
-  function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool);
+  function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool, uint8);
 }

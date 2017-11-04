@@ -20,16 +20,16 @@ exports.expectThrow = async promise => {
   assert.fail('Expected throw not received');
 };
 
-exports.assertEvent = (event, args, timeout) => {
+exports.assertEvent = (event, args, assertEqual = assert.deepEqual, timeout = 3000) => {
   return new Promise((resolve, reject) => {
 
     let t = setTimeout(() => {
       reject(new Error('Timeout while waiting for event'));
-    }, timeout || 3000);
+    }, timeout);
 
     event.watch((error, response) => {
       try {
-        assert.deepEqual(response.args, args, 'Event argument mismatch');
+        assertEqual(response.args, args, 'Event argument mismatch');
         resolve(response);
       } finally {
         clearTimeout(t);

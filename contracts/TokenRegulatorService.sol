@@ -10,6 +10,12 @@ import './RegulatorService.sol';
  */
 contract TokenRegulatorService is RegulatorService, Ownable {
 
+  uint8 constant ENONE = 0;
+  uint8 constant ELOCKED = 1;
+  uint8 constant EDIVIS = 2;
+  uint8 constant ESEND = 3;
+  uint8 constant ERECV = 4;
+
   /**
    * @dev Throws if called by any account other than the admin
    */
@@ -137,11 +143,24 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @return `true` if the trade should be approved and  `false` if the trade should not be approved
    */
-  function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool) {
-    return settings[_token].unlocked
-           && participants[_token][_from] & PERM_SEND > 0
-           && participants[_token][_to] & PERM_RECEIVE > 0
-           && (settings[_token].partialTransfers || _amount % 10**_decimals(_token) == 0);
+  function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool, uint8) {
+    if (!settings[_token].unlocked) {
+      return (false, ELOCKED);
+    }
+
+    if (participants[_token][_from] & PERM_SEND == 0) {
+      return (false, ESEND);
+    }
+
+    if (participants[_token][_to] & PERM_RECEIVE == 0) {
+      return (false, ERECV);
+    }
+
+    if (!settings[_token].partialTransfers && _amount % 10**_decimals(_token) != 0) {
+      return (false, EDIVIS);
+    }
+
+    return (true, ENONE);
   }
 
   /**
