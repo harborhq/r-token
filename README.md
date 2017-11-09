@@ -22,7 +22,7 @@ How it works by overriding ERC-20 methods.
 
 ## Features
 
-Flexibile, token level trade permission, participant level trade permissions.
+Upgradable, token level trade permission, participant level trade permissions.
 
 * Configuratble without code modification and need for more security auditing
 * Upgradable so regulator can change business logic as rules evolve over time
@@ -31,7 +31,7 @@ Flexibile, token level trade permission, participant level trade permissions.
 * Regulator can qualify/disqualify a trade participant from sending tokens
 * Regulator can qualify/disqualify a trade participant from receiving tokens
 
-### Flexible
+### Upgradable
 
 <p align="center">
   <img src="https://github.com/tatslabs/r-token/raw/bob/readme/docs/images/upgradability.png" width="500">
