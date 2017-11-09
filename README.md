@@ -16,7 +16,7 @@ How it works by overriding ERC-20 methods.
 * ServiceRegistry
 * RegulatorService
 
-![Component Diagram](https://github.com/tatslabs/r-token/raw/bob/readme/docs/images/component_diagram.png | width=200)
+![Component Diagram](https://github.com/tatslabs/r-token/raw/bob/readme/docs/images/component_diagram.png){:height="50%" width="50%"}
 
 ## Features
 
