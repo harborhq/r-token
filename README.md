@@ -1,6 +1,6 @@
 # Regulated Token System (R-Token)
 
-Smart Contracts to enfore secondary trade approval
+Smart Contracts to enforce secondary trade approval
 
 ## Description
 
@@ -24,7 +24,7 @@ How it works by overriding ERC-20 methods.
 
 Upgradable, token level trade permission, participant level trade permissions.
 
-* Configuratble without code modification and need for more security auditing
+* Configurable without code modification and need for more security auditing
 * Upgradable so regulator can change business logic as rules evolve over time
 * Regulator can lock/unlock trading for a period of time
 * Regulator can whitelist/blacklist partial token transfers
