@@ -1,4 +1,4 @@
-# Regulated Token System (r-token)
+# Regulated Token System (R-Token)
 
 Smart Contracts to enfore trade approval
 
