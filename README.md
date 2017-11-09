@@ -6,6 +6,10 @@ Smart Contracts to enfore secondary trade approval
 
 The Regulated Token System is a general purpose ERC-20 token implementation that overrides token transfer methods to consult an on-chain database for trade approval.  It is designed to be programmed with simple rules that can be turned off and on by regulators that maintain regulatory compliance in various jurisdictions around the world.  Whereas most issuers create unique token smart contracts with small tweaks, the Regulated Token System is designed to be a flexible standard for issuing regulated securities without code modification usable by any issuer.
 
+## Overview
+
+How it works by overriding ERC-20 methods.
+
 ## Components
 
 * RegulatedToken
@@ -42,3 +46,5 @@ Contributions are accepted from all walks of life including aliens (especially g
 * foobarfighter
 * arisa
 * bonninator
+
+
