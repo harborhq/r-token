@@ -9,13 +9,6 @@ import './RegulatorService.sol';
  * @author Bob Remeika
  */
 contract TokenRegulatorService is RegulatorService, Ownable {
-
-  uint8 constant ENONE = 0;
-  uint8 constant ELOCKED = 1;
-  uint8 constant EDIVIS = 2;
-  uint8 constant ESEND = 3;
-  uint8 constant ERECV = 4;
-
   /**
    * @dev Throws if called by any account other than the admin
    */
@@ -40,6 +33,21 @@ contract TokenRegulatorService is RegulatorService, Ownable {
      */
     bool partialTransfers;
   }
+
+  // @dev Check success code
+  uint8 constant private CHECK_SUCCESS = 0;
+
+  // @dev Check error reason: Token is locked
+  uint8 constant private CHECK_ELOCKED = 1;
+
+  // @dev Check error reason: Token can not trade partial amounts
+  uint8 constant private CHECK_EDIVIS = 2;
+
+  // @dev Check error reason: Sender is not allowed to send the token
+  uint8 constant private CHECK_ESEND = 3;
+
+  // @dev Check error reason: Receiver is not allowed to receive the token
+  uint8 constant private CHECK_ERECV = 4;
 
   /// @dev Permission bits for allowing a participant to send tokens
   uint8 constant private PERM_SEND = 0x1;
@@ -143,24 +151,24 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @return `true` if the trade should be approved and  `false` if the trade should not be approved
    */
-  function check(address _token, address _from, address _to, uint256 _amount) constant returns (bool, uint8) {
+  function check(address _token, address _from, address _to, uint256 _amount) constant returns (uint8) {
     if (!settings[_token].unlocked) {
-      return (false, ELOCKED);
+      return CHECK_ELOCKED;
     }
 
     if (participants[_token][_from] & PERM_SEND == 0) {
-      return (false, ESEND);
+      return CHECK_ESEND;
     }
 
     if (participants[_token][_to] & PERM_RECEIVE == 0) {
-      return (false, ERECV);
+      return CHECK_ERECV;
     }
 
     if (!settings[_token].partialTransfers && _amount % 10**_decimals(_token) != 0) {
-      return (false, EDIVIS);
+      return CHECK_EDIVIS;
     }
 
-    return (true, ENONE);
+    return CHECK_SUCCESS;
   }
 
   /**
