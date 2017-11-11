@@ -59,7 +59,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 ## Contributing
 
-Contributions are accepted from all walks of life including aliens (especially green ones).  Just sign [this](https://example.com) to protect our project so that others can use it in their projects with piece of mind.  Submissions will only be accepted after a Contributor's License Agreement (CLA) has been signed.
+Contributions are accepted from all walks of life including aliens (especially green ones).  Just sign [Contributor's License Agreement (CLA)](https://cla.github.com/agreement) to protect our project so that others can use it in their projects with piece of mind.  Submissions will only be accepted after a [Contributor's License Agreement (CLA)](https://cla.github.com/agreement) has been signed.
 
 ## Collaborators
 
