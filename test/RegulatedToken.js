@@ -29,15 +29,15 @@ contract('RegulatedToken', async function(accounts) {
   }
 
   const assertCheckStatusEvent = async (event, success, reason) => {
-    return helpers.assertEvent(event, { success, reason: new BigNumber(reason) }, (expected, actual) => {
-        assert.equal(expected.success, actual.success);
+    return helpers.assertEvent(event, { reason: new BigNumber(reason) }, (expected, actual) => {
+        // assert.equal(expected.success, actual.success);
         assert.equal(expected.reason.valueOf(), actual.reason.valueOf());
     });
   }
 
   const checkResult = async (tokenAddress, sender, receiver, amount) => {
-    const status = await regulator.check.call(tokenAddress, sender, receiver, amount);
-    return status[0];
+    const reason = await regulator.check.call(tokenAddress, sender, receiver, amount);
+    return reason == 0;
   }
 
   describe('transfer', () => {

@@ -42,8 +42,7 @@ contract('TokenRegulatorService', async (accounts) => {
   }
 
   const assertResult = (ret, success, reason) => {
-    assert.equal(ret[0], success, 'Assert success');
-    assert.equal(ret[1], reason, 'Assert reason');
+    assert.equal(ret, reason, 'Assert reason');
   }
 
   describe('permissions', () => {
