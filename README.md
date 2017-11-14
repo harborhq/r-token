@@ -59,9 +59,21 @@ When `RegulatorService` logic needs to be updated, the migration path resembles 
 
 ### Token/Participant Level Permissions
 
+In the `TokenRegulatorService` implementation of the `RegulatorService` interface, there are token level permissions and participant level permissions.  These permissions should be updated by an off-chain process like shown below:
+
 <p align="center">
   <img src="https://github.com/tatslabs/r-token/raw/bob/readme/docs/images/permissions.png" width="500">
 </p>
+
+Token level permissions include:
+
+* `unlocked` - controls locking and unlocking of all token trades for a particular token
+* `partialAmounts` - allows or disallows transfers of partial token amounts
+
+Participant level permissions include:
+
+* `PERM_SEND` - permission for a participant to send a token to another account
+* `PERM_RECV` - permission for a participant to receive a token from another account
 
 
 ### Wallet Compatibility
