@@ -16,15 +16,15 @@ is also included as a method for upgrading the R-token check logic as rules are 
 ## Components
 
 * RegulatedToken
-  1. Permissioned ERC-20 smart contract representing ownership of securities 
-  2. Compatible with existing wallets and exchanges that support the ERC-20 token standard
-  3. Overrides the existing ERC-20 transfer method to check with an on-chain Regulator Service for trade approval
+  * Permissioned ERC-20 smart contract representing ownership of securities 
+  * Compatible with existing wallets and exchanges that support the ERC-20 token standard
+  * Overrides the existing ERC-20 transfer method to check with an on-chain Regulator Service for trade approval
 * RegulatorService
-  1. Contains the permissions necessary for regulatory compliance 
-  2. Relies on off-chain trade approver to set and update permissions
+  * Contains the permissions necessary for regulatory compliance 
+  * Relies on off-chain trade approver to set and update permissions
 * ServiceRegistry
-  1. Accounts for regulatory requirement changes over time 
-  2. Routes the R-token to the correct version of the Regulator Service
+  * Accounts for regulatory requirement changes over time 
+  * Routes the R-token to the correct version of the Regulator Service
 
 
 <p align="center">
@@ -50,23 +50,27 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
   <img src="https://github.com/tatslabs/r-token/raw/bob/readme/docs/images/upgradability.png" width="500">
 </p>
 
-### Permissions
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+### Token/Participant Level Permissions
 
 <p align="center">
   <img src="https://github.com/tatslabs/r-token/raw/bob/readme/docs/images/permissions.png" width="500">
 </p>
 
-## Ownership
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+### Wallet Compatibility
 
-| Left Aligned  | Center Aligned  | Right Aligned |
-|:------------- |:---------------:| -------------:|
-| col 3 is      | some wordy text |         $1600 |
-| col 2 is      | centered        |           $12 |
-| zebra stripes | are neat        |            $1 |
+The `RegulatedToken` is compatible with ERC-20 wallets with one additional feature.  After `transfer()` or `transferFrom()` are called, a `CheckStatus` event is fired.  A `CheckStatus` event with a reason code of `0` indicates success.  A non-zero reason code indicates a failure with a reason code that is specific to the `RegulatorService` implementation.
+
+
+## Administrative Roles / Contract Ownership
+
+Administration privileges for the R-token smart contracts are divided into two roles: `Owner` and `Admin`.  We will continue to decentralize administration in future versions.  The privileges for each role are defined below:
+
+|            | RegulatedToken  | ServiceRegistry                  | RegulatorService                                                  |
+|:-----------|:--------------- |:-------------------------------- |:----------------------------------------------------------------- |
+| Owner      | Can Mint        | Transfer Owner / Replace Service | Update Token Level Settings / Transfer Ownership / Transfer Admin |
+| Admin      | N/A             | N/A                              | Update Participant Level Settings                                 |
+
 
 ## Contributing
 
