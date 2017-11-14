@@ -8,10 +8,7 @@ R-token is a permissioned token on the Ethereum blockchain, enabling token trans
 
 ## How It Works
 
-R-token implements ERC-20 methods `transfer()` and `transferFrom()` with an additional check that executes logic as to
-whether or not a transfer is approved.  The implementation of the check can take many forms. Included in this repository
-is a whitelisting approach designed to keep tokens compliant under Regulation S and Regulation D.  The `ServiceRegistry`
-is also included as a method for upgrading the R-token check logic as rules are likely to change over time.
+R-token implements ERC-20 methods `transfer()` and `transferFrom()` with an additional check to determine whether or not a transfer should be allowed to proceed.  The implementation of `check()` can take many forms, but a default whitelist approach is implemented by `TokenRegulatorService`.  Token and pariticipant level permissions, when used in different combinations, can be used to satisfy multiple regulatory exemptions.  The `ServiceRegistry` is included as a mechanism to facilitate upgrading the R-token check logic as rules change over time.
 
 ## Components
 
