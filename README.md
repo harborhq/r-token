@@ -1,6 +1,6 @@
 # Regulated Token System (R-token)
 
-Smart Contracts to enforce secondary trade approval
+Smart Contracts to enforce regulated trade compliance
 
 ## Description
 
