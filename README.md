@@ -6,7 +6,7 @@ Smart Contracts to enforce secondary trade approval
 
 R-token is a permissioned token on the Ethereum blockchain, enabling token transfers to occur if and only if they are approved by an on-chain Regulator Service. Implemented in conjunction with an off-chain Trade Controller and proper customer due diligence, R-Tokens make possible for the first time the enforcement of regulations governing the transfer of private securities on the blockchain, for ICOs and every secondary trade.
 
-## Overview
+## How It Works
 
 R-token implements ERC-20 methods `transfer()` and `transferFrom()` with an additional check that executes logic as to
 whether or not a transfer is approved.  The implementation of the check can take many forms. Included in this repository
@@ -44,11 +44,18 @@ Upgradable, token level trade permission and participant level trade permissions
 
 ### Upgradable
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+The `ServiceRegistry` is used to point many `RegulatedToken` smart contracts to a single `RegistryService`.  This setup is recommended so that rules and logic implemented by the `RegulatorService` can be upgraded by changing a single `RegulatorService` address held by the `ServiceRegistry`.
 
 <p align="center">
   <img src="https://github.com/tatslabs/r-token/raw/bob/readme/docs/images/upgradability.png" width="500">
 </p>
+
+
+When `RegulatorService` logic needs to be updated, the migration path resembles a process like this:
+
+1. Deploy new RegulatorService (V2)
+2. Copy required state from Regulator Service V1 to RegulatorService V2
+3. Call `replaceService()` on `ServiceRegistry` with address pointing to RegulatorService V2
 
 ### Token/Participant Level Permissions
 
@@ -64,7 +71,9 @@ The `RegulatedToken` is compatible with ERC-20 wallets with one additional featu
 
 ## Administrative Roles / Contract Ownership
 
-Administration privileges for the R-token smart contracts are divided into two roles: `Owner` and `Admin`.  We will continue to decentralize administration in future versions.  The privileges for each role are defined below:
+Administrative privileges on R-token smart contracts are divided into two roles: `Owner` and `Admin`.  We will continue to decentralize administration in future versions.
+
+The privileges for each role are defined below:
 
 |            | RegulatedToken  | ServiceRegistry                  | RegulatorService                                                  |
 |:-----------|:--------------- |:-------------------------------- |:----------------------------------------------------------------- |
