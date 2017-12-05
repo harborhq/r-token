@@ -25,7 +25,7 @@ R-token implements ERC-20 methods `transfer()` and `transferFrom()` with an addi
 
 
 <p align="center">
-  <img src="https://github.com/tatslabs/r-token/raw/bob/readme/docs/images/component_diagram.png" width="500">
+  <img src="https://github.com/tatslabs/r-token/raw/master/docs/images/component_diagram.png" width="500">
 </p>
 
 ## Features
@@ -44,7 +44,7 @@ Upgradable, token level trade permission and participant level trade permissions
 The `ServiceRegistry` is used to point many `RegulatedToken` smart contracts to a single `RegistryService`.  This setup is recommended so that rules and logic implemented by the `RegulatorService` can be upgraded by changing a single `RegulatorService` address held by the `ServiceRegistry`.
 
 <p align="center">
-  <img src="https://github.com/tatslabs/r-token/raw/bob/readme/docs/images/upgradability.png" width="500">
+  <img src="https://github.com/tatslabs/r-token/raw/master/docs/images/upgradability.png" width="500">
 </p>
 
 
@@ -59,7 +59,7 @@ When `RegulatorService` logic needs to be updated, the migration path resembles 
 In the `TokenRegulatorService` implementation of the `RegulatorService` interface, there are token level permissions and participant level permissions.  These permissions should be updated by an off-chain process like shown below:
 
 <p align="center">
-  <img src="https://github.com/tatslabs/r-token/raw/bob/readme/docs/images/permissions.png" width="500">
+  <img src="https://github.com/tatslabs/r-token/raw/master/docs/images/permissions.png" width="500">
 </p>
 
 Token level permissions include:
