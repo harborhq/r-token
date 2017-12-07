@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.18;
 
 /// @notice Standard interface for `RegulatorService`s
 contract RegulatorService {
@@ -19,5 +19,5 @@ contract RegulatorService {
    *         should not be approved.  `reason` is the reason code as to why the trade failed if `success` is
    *         `false`.
    */
-  function check(address _token, address _from, address _to, uint256 _amount) constant returns (uint8);
+  function check(address _token, address _from, address _to, uint256 _amount) constant public returns (uint8);
 }

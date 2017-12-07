@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.18;
 
 import '../../contracts/RegulatorService.sol';
 
@@ -6,12 +6,12 @@ contract MockRegulatorService is RegulatorService  {
   bool public success;
   uint8 public reason;
 
-  function setCheckResult(bool _success, uint8 _reason) {
+  function setCheckResult(bool _success, uint8 _reason) public {
     success = _success;
     reason = _reason;
   }
 
-  function check(address, address, address, uint256) constant returns (uint8) {
+  function check(address, address, address, uint256) constant public returns (uint8) {
     return reason;
   }
 }
