@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.18;
 
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
 import './ServiceRegistry.sol';
@@ -24,14 +24,14 @@ contract RegulatedToken is MintableToken {
    *
    * @param _registry Address of `ServiceRegistry` contract
    */
-  function RegulatedToken(address _registry) {
+  function RegulatedToken(address _registry) public {
     registry = ServiceRegistry(_registry);
   }
 
   /**
    * @notice The max precision for a partial token
    */
-  function decimals() constant returns (uint256) {
+  function decimals() pure public returns (uint256) {
     return 18;
   }
 
@@ -40,7 +40,7 @@ contract RegulatedToken is MintableToken {
    *
    * @return `true` if regulated and `false` if not regulated
    */
-  function isRegulated() constant returns (bool) {
+  function isRegulated() constant public returns (bool) {
     return registry != address(0);
   }
 
@@ -52,7 +52,7 @@ contract RegulatedToken is MintableToken {
    *
    * @return `true` if successful and `false` if unsuccessful
    */
-  function transfer(address _to, uint256 _value) returns (bool) {
+  function transfer(address _to, uint256 _value) public returns (bool) {
     if (!_check(msg.sender, _to, _value)) {
       return false;
     }
@@ -69,7 +69,7 @@ contract RegulatedToken is MintableToken {
    *
    * @return `true` if successful and `false` if unsuccessful
    */
-  function transferFrom(address _from, address _to, uint256 _value) returns (bool) {
+  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
     if (!_check(_from, _to, _value)){
       return false;
     }
@@ -88,7 +88,7 @@ contract RegulatedToken is MintableToken {
    *
    * @return `true` if the check was successful and `false` if unsuccessful
    */
-  function _check(address _from, address _to, uint256 _value) constant private returns (bool) {
+  function _check(address _from, address _to, uint256 _value) private returns (bool) {
     var reason = _service().check(this, _from, _to, _value);
 
     CheckStatus(reason);
@@ -104,7 +104,7 @@ contract RegulatedToken is MintableToken {
    *
    * @return The `RegulatorService` that manages this token.
    */
-  function _service() constant returns (RegulatorService) {
+  function _service() constant public returns (RegulatorService) {
     return RegulatorService(registry.service());
   }
 }

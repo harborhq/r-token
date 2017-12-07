@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.18;
 
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 import './RegulatedToken.sol';
@@ -64,7 +64,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   /// @notice Permissions that allow/disallow token trades on a per participant basis
   mapping(address => mapping(address => uint8)) participants;
 
-  function RegulatorService() {
+  function RegulatorService() public {
     admin = msg.sender;
   }
 
@@ -75,7 +75,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to lock
    */
-  function lock(address _token) onlyOwner {
+  function lock(address _token) onlyOwner public {
     settings[_token].unlocked = false;
   }
 
@@ -86,7 +86,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to lock
    */
-  function unlock(address _token) onlyOwner {
+  function unlock(address _token) onlyOwner public {
     settings[_token].unlocked = true;
   }
 
@@ -97,7 +97,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to allow partial transfers
    */
-  function allowPartialTransfers(address _token) onlyOwner {
+  function allowPartialTransfers(address _token) onlyOwner public {
    settings[_token].partialTransfers = true;
   }
 
@@ -108,7 +108,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to allow partial transfers
    */
-  function disallowPartialTransfers(address _token) onlyOwner {
+  function disallowPartialTransfers(address _token) onlyOwner public {
    settings[_token].partialTransfers = false;
   }
 
@@ -123,7 +123,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    * @param  _participant The address of the trade participant
    * @param  _permission Permission bits to be set
    */
-  function setPermission(address _token, address _participant, uint8 _permission) onlyAdmins {
+  function setPermission(address _token, address _participant, uint8 _permission) onlyAdmins public {
     participants[_token][_participant] = _permission;
   }
 
@@ -132,7 +132,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param newAdmin The address to transfer ownership to.
    */
-  function transferAdmin(address newAdmin) onlyOwner {
+  function transferAdmin(address newAdmin) onlyOwner public {
     if (newAdmin != address(0)) {
       admin = newAdmin;
     }
@@ -151,7 +151,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @return `true` if the trade should be approved and  `false` if the trade should not be approved
    */
-  function check(address _token, address _from, address _to, uint256 _amount) constant returns (uint8) {
+  function check(address _token, address _from, address _to, uint256 _amount) constant public returns (uint8) {
     if (!settings[_token].unlocked) {
       return CHECK_ELOCKED;
     }
@@ -178,7 +178,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @return The number of decimals
    */
-  function _decimals(address _token) constant private returns (uint256) {
+  function _decimals(address _token) pure private returns (uint256) {
     return RegulatedToken(_token).decimals();
   }
 }
