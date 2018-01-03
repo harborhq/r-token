@@ -65,6 +65,18 @@ contract('TokenRegulatorService', async (accounts) => {
         );
       });
     });
+
+    describe('default roles', () => {
+      it('defaults the owner as the creator of the contract', async () => {
+        const currentOwner = await service.owner();
+        assert.equal(owner, currentOwner);
+      });
+
+      it('defaults the admin as the creator of the contract', async () => {
+        const currentAdmin = await service.admin();
+        assert.equal(owner, currentAdmin);
+      });
+    });
   });
 
   describe('locking', () => {

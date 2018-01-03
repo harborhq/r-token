@@ -56,7 +56,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   uint8 constant private PERM_RECEIVE = 0x2;
 
   // @dev Address of the administrator
-  address admin;
+  address public admin;
 
   /// @notice Permissions that allow/disallow token trades on a per token level
   mapping(address => Settings) settings;
@@ -64,7 +64,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   /// @notice Permissions that allow/disallow token trades on a per participant basis
   mapping(address => mapping(address => uint8)) participants;
 
-  function RegulatorService() public {
+  function TokenRegulatorService() public {
     admin = msg.sender;
   }
 
