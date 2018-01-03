@@ -1,5 +1,5 @@
 {
-  "name": "realcoins-poc",
+  "name": "r-token",
   "version": "1.0.0",
   "description": "Proof of concept for RegulatedToken",
   "main": "truffle.js",
