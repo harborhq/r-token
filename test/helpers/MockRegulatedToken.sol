@@ -7,7 +7,7 @@ contract MockRegulatedToken is RegulatedToken {
   RegulatorService public service;
   uint public decimals;
 
-  function MockRegulatedToken(address _service) RegulatedToken(0) public {
+  function MockRegulatedToken(address _service) RegulatedToken(ServiceRegistry(0)) public {
     service = RegulatorService(_service);
   }
 
