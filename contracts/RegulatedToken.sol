@@ -10,7 +10,7 @@ contract RegulatedToken is MintableToken {
   /**
    * @notice Triggered when regulator checks pass or fail
    */
-  event CheckStatus(uint8 reason);
+  event CheckStatus(uint8 reason, address from, address to, uint256 value);
 
   /**
    * @notice Address of the `ServiceRegistry` that has the location of the
@@ -91,7 +91,7 @@ contract RegulatedToken is MintableToken {
   function _check(address _from, address _to, uint256 _value) private returns (bool) {
     var reason = _service().check(this, _from, _to, _value);
 
-    CheckStatus(reason);
+    CheckStatus(reason, _from, _to, _value);
 
     return reason == 0;
   }
