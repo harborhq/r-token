@@ -31,7 +31,7 @@ contract RegulatedToken is MintableToken {
   /**
    * @notice The max precision for a partial token
    */
-  function decimals() pure public returns (uint256) {
+  function decimals() pure public returns (uint8) {
     return 18;
   }
 
