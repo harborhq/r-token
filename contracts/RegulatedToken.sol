@@ -55,9 +55,9 @@ contract RegulatedToken is MintableToken {
   function transfer(address _to, uint256 _value) public returns (bool) {
     if (!_check(msg.sender, _to, _value)) {
       return false;
+    } else {
+      return super.transfer(_to, _value);
     }
-
-    return super.transfer(_to, _value);
   }
 
   /**
@@ -72,9 +72,9 @@ contract RegulatedToken is MintableToken {
   function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
     if (!_check(_from, _to, _value)){
       return false;
+    } else {
+      return super.transferFrom(_from, _to, _value);
     }
-
-    return super.transferFrom(_from, _to, _value);
   }
 
   /**
