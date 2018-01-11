@@ -47,6 +47,12 @@ contract('RegulatedToken', async function(accounts) {
     return reason == 0;
   }
 
+  describe('constructor', () => {
+    it('requires a non-zero registry argument', async () => {
+      await helpers.expectThrow(RegulatedToken.new(0));
+    });
+  });
+
   describe('transfer', () => {
     describe('when the transfer is NOT approved by the regulator', () => {
       beforeEach(async () => {
