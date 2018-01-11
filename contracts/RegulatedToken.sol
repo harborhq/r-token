@@ -25,6 +25,8 @@ contract RegulatedToken is MintableToken {
    * @param _registry Address of `ServiceRegistry` contract
    */
   function RegulatedToken(ServiceRegistry _registry) public {
+    require(_registry != address(0));
+
     registry = _registry;
   }
 

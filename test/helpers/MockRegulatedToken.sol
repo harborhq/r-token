@@ -7,7 +7,8 @@ contract MockRegulatedToken is RegulatedToken {
   RegulatorService public service;
   uint public decimals;
 
-  function MockRegulatedToken(address _service) RegulatedToken(ServiceRegistry(0)) public {
+  // 0xffffffff is a test address for ServiceRegistry that is bypassed by our _service() implementation
+  function MockRegulatedToken(address _service) RegulatedToken(ServiceRegistry(0xffffffff)) public {
     service = RegulatorService(_service);
   }
 
