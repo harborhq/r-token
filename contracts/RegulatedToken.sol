@@ -36,15 +36,6 @@ contract RegulatedToken is MintableToken {
   }
 
   /**
-   * @notice Returns whether or not this token is regulated
-   *
-   * @return `true` if regulated and `false` if not regulated
-   */
-  function isRegulated() constant public returns (bool) {
-    return registry != address(0);
-  }
-
-  /**
    * @notice ERC-20 overridden function that include logic to check for trade validity.
    *
    * @param _to The address of the receiver

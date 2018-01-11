@@ -51,10 +51,7 @@ contract('RegulatedToken', async function(accounts) {
     describe('when the transfer is NOT approved by the regulator', () => {
       beforeEach(async () => {
         await regulator.setCheckResult(false, 255);
-
-        assert.isTrue(await token.isRegulated.call());
         assert.isFalse(await checkResult(token.address, owner, receiver, 0));
-
         await assertBalances({ owner: 100, receiver: 0 });
       });
 
@@ -81,10 +78,7 @@ contract('RegulatedToken', async function(accounts) {
     describe('when the transfer is approved by the regulator', () => {
       beforeEach(async () => {
         await regulator.setCheckResult(true, 0);
-
-        assert.isTrue(await token.isRegulated.call());
         assert.isTrue(await checkResult(token.address, owner, receiver, 0));
-
         await assertBalances({ owner: 100, receiver: 0 });
       });
 
@@ -116,11 +110,8 @@ contract('RegulatedToken', async function(accounts) {
       beforeEach(async () => {
         await regulator.setCheckResult(false, 255);
 
-        assert.isTrue(await token.isRegulated.call());
         assert.isFalse(await checkResult(token.address, owner, receiver, 0));
-
         await token.approve(receiver, 25);
-
         await assertBalances({ owner: 100, receiver: 0 });
       });
 
@@ -149,11 +140,8 @@ contract('RegulatedToken', async function(accounts) {
       beforeEach(async () => {
         await regulator.setCheckResult(true, 0);
 
-        assert.isTrue(await token.isRegulated.call());
         assert.isTrue(await checkResult(token.address, owner, receiver, 0));
-
         await token.approve(receiver, 25);
-
         await assertBalances({ owner: 100, receiver: 0 });
       });
 
