@@ -12,12 +12,11 @@ contract RegulatorService {
    *
    * @param  _token The address of the token to be transfered
    * @param  _from The address of the sender account
-   * @param  _from The address of the receiver account
+   * @param  _to The address of the receiver account
    * @param  _amount The quantity of the token to trade
    *
-   * @return (success, reason) `success` is `true` if the trade should be approved and  `false` if the trade
-   *         should not be approved.  `reason` is the reason code as to why the trade failed if `success` is
-   *         `false`.
+   * @return uint8 The reason code: 0 means success.  Non-zero values are left to the implementation
+   *               to assign meaning.
    */
   function check(address _token, address _from, address _to, uint256 _amount) constant public returns (uint8);
 }
