@@ -107,9 +107,9 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   }
 
   /**
-   * @dev Allows the current admin to transfer control of the contract to a newAdmin.
+   * @dev Allows the owner to transfer admin controls to newAdmin.
    *
-   * @param newAdmin The address to transfer ownership to.
+   * @param newAdmin The address to transfer admin rights to.
    */
   function transferAdmin(address newAdmin) onlyOwner public {
     require(newAdmin != address(0));
