@@ -42,8 +42,15 @@ contract('ServiceRegistry', async (accounts) => {
     });
 
     it('should allow the owner to replace the service with a contract', async () => {
+      const event = registry.ReplaceService();
+
       await registry.replaceService(newService.address);
       assert.equal(await registry.service(), newService.address);
+
+      await helpers.assertEvent(event, {
+        oldService: service.address,
+        newService: newService.address
+      })
     });
 
     it('should NOT allow an invalid address', async () => {
