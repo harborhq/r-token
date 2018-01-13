@@ -49,10 +49,10 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @return `true` if successful and `false` if unsuccessful
    */
   function transfer(address _to, uint256 _value) public returns (bool) {
-    if (!_check(msg.sender, _to, _value)) {
-      return false;
-    } else {
+    if (_check(msg.sender, _to, _value)) {
       return super.transfer(_to, _value);
+    } else {
+      return false;
     }
   }
 
@@ -66,10 +66,10 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @return `true` if successful and `false` if unsuccessful
    */
   function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
-    if (!_check(_from, _to, _value)){
-      return false;
-    } else {
+    if (_check(_from, _to, _value)) {
       return super.transferFrom(_from, _to, _value);
+    } else {
+      return false;
     }
   }
 
