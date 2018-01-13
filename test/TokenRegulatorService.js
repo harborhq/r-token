@@ -130,7 +130,27 @@ contract('TokenRegulatorService', async (accounts) => {
     });
   });
 
-  describe('permissions', async () => {
+  describe('transferAdmin()', () => {
+    describe('when the new admin is valid', () => {
+      beforeEach(async () => {
+        assert.equal(await service.admin(), owner);
+      });
+
+      it('sets the new admin', async () => {
+        await service.transferAdmin(admin);
+        assert.equal(await service.admin(), admin);
+      });
+    });
+
+    describe('when the new admin is NOT valid', () => {
+      it('throws', async () => {
+        await helpers.expectThrow(service.transferAdmin(0));
+        assert.equal(await service.admin(), owner);
+      });
+    });
+  });
+
+  describe('transfer permissions', () => {
     beforeEach(async () => {
       await service.setLocked(token.address, false);
     });

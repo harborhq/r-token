@@ -112,9 +112,8 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    * @param newAdmin The address to transfer ownership to.
    */
   function transferAdmin(address newAdmin) onlyOwner public {
-    if (newAdmin != address(0)) {
-      admin = newAdmin;
-    }
+    require(newAdmin != address(0));
+    admin = newAdmin;
   }
 
   /**
