@@ -41,15 +41,14 @@ contract('ServiceRegistry', async (accounts) => {
       newService = await MockRegulatorService.new({ from: owner });
     });
 
-    it('should allow the owner to replace the service', async () => {
+    it('should allow the owner to replace the service with a contract', async () => {
       await registry.replaceService(newService.address);
       assert.equal(await registry.service(), newService.address);
     });
 
     it('should NOT allow an invalid address', async () => {
-      await helpers.expectThrow(
-        registry.replaceService(0)
-      );
+      await helpers.expectThrow(registry.replaceService(participant));
+      await helpers.expectThrow(registry.replaceService(0));
       assert.equal(await registry.service(), service.address);
     });
 
