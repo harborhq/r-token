@@ -164,7 +164,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
       return CHECK_ERECV;
     }
 
-    if (!settings[_token].partialTransfers && _amount % 10**_decimals(_token) != 0) {
+    if (!settings[_token].partialTransfers && _amount % _wholeToken(_token) != 0) {
       return CHECK_EDIVIS;
     }
 
@@ -172,13 +172,13 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   }
 
   /**
-   * @notice Retrieve the `decimals` setting from a token that this `RegulatorService` manages
+   * @notice Retrieves the whole token value from a token that this `RegulatorService` manages
    *
    * @param  _token The token address of the managed token
    *
-   * @return The number of decimals
+   * @return The uint256 value that represents a single whole token
    */
-  function _decimals(address _token) pure private returns (uint256) {
-    return RegulatedToken(_token).decimals();
+  function _wholeToken(address _token) pure private returns (uint256) {
+    return uint256(10)**RegulatedToken(_token).decimals();
   }
 }
