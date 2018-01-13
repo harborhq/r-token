@@ -75,19 +75,8 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to lock
    */
-  function lock(address _token) onlyOwner public {
-    settings[_token].unlocked = false;
-  }
-
-  /**
-   * @notice Unlocks the ability to trade a token
-   *
-   * @dev    This method can only be called by this contract's owner
-   *
-   * @param  _token The address of the token to lock
-   */
-  function unlock(address _token) onlyOwner public {
-    settings[_token].unlocked = true;
+  function setLocked(address _token, bool _locked) onlyOwner public {
+    settings[_token].unlocked = !_locked;
   }
 
   /**
@@ -97,19 +86,8 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to allow partial transfers
    */
-  function allowPartialTransfers(address _token) onlyOwner public {
-   settings[_token].partialTransfers = true;
-  }
-
-  /**
-   * @notice Disallows the ability to trade a fraction of a token
-   *
-   * @dev    This method can only be called by this contract's owner
-   *
-   * @param  _token The address of the token to allow partial transfers
-   */
-  function disallowPartialTransfers(address _token) onlyOwner public {
-   settings[_token].partialTransfers = false;
+  function setPartialTransfersEnabled(address _token, bool _enabled) onlyOwner public {
+   settings[_token].partialTransfers = _enabled;
   }
 
   /**
