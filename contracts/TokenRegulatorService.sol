@@ -1,6 +1,7 @@
 pragma solidity ^0.4.18;
 
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
+import 'zeppelin-solidity/contracts/token/DetailedERC20.sol';
 import './RegulatedToken.sol';
 import './RegulatorService.sol';
 
@@ -156,7 +157,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @return The uint256 value that represents a single whole token
    */
-  function _wholeToken(address _token) pure private returns (uint256) {
-    return uint256(10)**RegulatedToken(_token).decimals();
+  function _wholeToken(address _token) view private returns (uint256) {
+    return uint256(10)**DetailedERC20(_token).decimals();
   }
 }

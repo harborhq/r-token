@@ -15,7 +15,7 @@ contract('RegulatedToken', async function(accounts) {
 
     let registry = await ServiceRegistry.new(regulator.address);
 
-    token = await RegulatedToken.new(registry.address);
+    token = await RegulatedToken.new(registry.address, "Test", "TEST");
 
     await token.mint(owner, 100);
     await token.finishMinting();

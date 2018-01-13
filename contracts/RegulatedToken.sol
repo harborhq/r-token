@@ -1,11 +1,17 @@
 pragma solidity ^0.4.18;
 
+import 'zeppelin-solidity/contracts/token/DetailedERC20.sol';
 import 'zeppelin-solidity/contracts/token/MintableToken.sol';
 import './ServiceRegistry.sol';
 import './RegulatorService.sol';
 
 /// @notice An ERC-20 token that has the ability to check for trade validity
-contract RegulatedToken is MintableToken {
+contract RegulatedToken is DetailedERC20, MintableToken {
+
+  /**
+   * @notice Decimals per DetailedERC20
+   */
+  uint8 constant public DECIMALS = 18;
 
   /**
    * @notice Triggered when regulator checks pass or fail
@@ -23,18 +29,15 @@ contract RegulatedToken is MintableToken {
    * @notice Constructor
    *
    * @param _registry Address of `ServiceRegistry` contract
+   * @param _name Name of the token: See DetailedERC20
+   * @param _symbol Symbol of the token: See DetailedERC20
    */
-  function RegulatedToken(ServiceRegistry _registry) public {
+  function RegulatedToken(ServiceRegistry _registry, string _name, string _symbol) public
+    DetailedERC20(_name, _symbol, DECIMALS)
+  {
     require(_registry != address(0));
 
     registry = _registry;
-  }
-
-  /**
-   * @notice The max precision for a partial token
-   */
-  function decimals() pure public returns (uint8) {
-    return 18;
   }
 
   /**
