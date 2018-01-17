@@ -10,7 +10,7 @@
     "test": "truffle test"
   },
   "author": "Bob Remeika",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {},
   "dependencies": {
     "bignumber.js": "^4.1.0",
