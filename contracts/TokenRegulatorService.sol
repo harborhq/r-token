@@ -62,8 +62,10 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   /// @notice Permissions that allow/disallow token trades on a per token level
   mapping(address => Settings) settings;
 
-  /// @notice Permissions that allow/disallow token trades on a per participant basis
-  mapping(address => mapping(address => uint8)) participants;
+  /// @dev Permissions that allow/disallow token trades on a per participant basis.
+  ///      The format for key based access is `participants[tokenAddress][participantAddress]`
+  ///      which returns the permission bits of a participant for a particular token.
+  mapping(address => mapping(address => uint8)) private participants;
 
   function TokenRegulatorService() public {
     admin = msg.sender;
