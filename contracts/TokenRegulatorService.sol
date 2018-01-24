@@ -60,7 +60,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   address public admin;
 
   /// @notice Permissions that allow/disallow token trades on a per token level
-  mapping(address => Settings) settings;
+  mapping(address => Settings) private settings;
 
   /// @dev Permissions that allow/disallow token trades on a per participant basis.
   ///      The format for key based access is `participants[tokenAddress][participantAddress]`
