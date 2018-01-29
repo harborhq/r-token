@@ -8,24 +8,24 @@ R-token is a permissioned token on the Ethereum blockchain, enabling token trans
 
 ## How It Works
 
-R-token implements ERC-20 methods `transfer()` and `transferFrom()` with an additional check to determine whether or not a transfer should be allowed to proceed.  The implementation of `check()` can take many forms, but a default whitelist approach is implemented by `TokenRegulatorService`.  Token and pariticipant level permissions, when used in different combinations, can be used to satisfy multiple regulatory exemptions.  The `ServiceRegistry` is included as a mechanism to facilitate upgrading the R-token check logic as rules change over time.
+R-token implements ERC-20 methods `transfer()` and `transferFrom()` with an additional check to determine whether or not a transfer should be allowed to proceed. The implementation of `check()` can take many forms, but a default whitelist approach is implemented by `TokenRegulatorService`. Token and participant level permissions, when used in different combinations, can be used to satisfy multiple regulatory exemptions. The `ServiceRegistry` is included as a mechanism to facilitate upgrading the R-token check logic as rules change over time.
 
 ## Components
 
 * RegulatedToken
-  * Permissioned ERC-20 smart contract representing ownership of securities 
+  * Permissioned ERC-20 smart contract representing ownership of securities
   * Compatible with existing wallets and exchanges that support the ERC-20 token standard
   * Overrides the existing ERC-20 transfer method to check with an on-chain Regulator Service for trade approval
 * RegulatorService
-  * Contains the permissions necessary for regulatory compliance 
+  * Contains the permissions necessary for regulatory compliance
   * Relies on off-chain trade approver to set and update permissions
 * ServiceRegistry
-  * Accounts for regulatory requirement changes over time 
+  * Accounts for regulatory requirement changes over time
   * Routes the R-token to the correct version of the Regulator Service
 
 
 <p align="center">
-  <img src="https://github.com/tatslabs/r-token/raw/master/docs/images/component_diagram.png" width="500">
+  <img src="https://github.com/harborhq/r-token/raw/master/docs/images/component_diagram.png" width="500">
 </p>
 
 ## Features
@@ -41,10 +41,10 @@ Upgradable, token level trade permission and participant level trade permissions
 
 ### Upgradable
 
-The `ServiceRegistry` is used to point many `RegulatedToken` smart contracts to a single `RegistryService`.  This setup is recommended so that rules and logic implemented by the `RegulatorService` can be upgraded by changing a single `RegulatorService` address held by the `ServiceRegistry`.
+The `ServiceRegistry` is used to point many `RegulatedToken` smart contracts to a single `RegistryService`. This setup is recommended so that rules and logic implemented by the `RegulatorService` can be upgraded by changing a single `RegulatorService` address held by the `ServiceRegistry`.
 
 <p align="center">
-  <img src="https://github.com/tatslabs/r-token/raw/master/docs/images/upgradability.png" width="500">
+  <img src="https://github.com/harborhq/r-token/raw/master/docs/images/upgradability.png" width="500">
 </p>
 
 
@@ -56,10 +56,10 @@ When `RegulatorService` logic needs to be updated, the migration path resembles 
 
 ### Token/Participant Level Permissions
 
-In the `TokenRegulatorService` implementation of the `RegulatorService` interface, there are token level permissions and participant level permissions.  These permissions should be updated by an off-chain process like shown below:
+In the `TokenRegulatorService` implementation of the `RegulatorService` interface, there are token level permissions and participant level permissions. These permissions should be updated by an off-chain process like shown below:
 
 <p align="center">
-  <img src="https://github.com/tatslabs/r-token/raw/master/docs/images/permissions.png" width="500">
+  <img src="https://github.com/harborhq/r-token/raw/master/docs/images/permissions.png" width="500">
 </p>
 
 Token level permissions include:
@@ -75,12 +75,12 @@ Participant level permissions include:
 
 ### Wallet Compatibility
 
-The `RegulatedToken` is compatible with ERC-20 wallets with one additional feature.  After `transfer()` or `transferFrom()` are called, a `CheckStatus` event is fired.  A `CheckStatus` event with a reason code of `0` indicates success.  A non-zero reason code indicates a failure with a reason code that is specific to the `RegulatorService` implementation.
+The `RegulatedToken` is compatible with ERC-20 wallets with one additional feature. After `transfer()` or `transferFrom()` are called, a `CheckStatus` event is fired. A `CheckStatus` event with a reason code of `0` indicates success. A non-zero reason code indicates a failure with a reason code that is specific to the `RegulatorService` implementation.
 
 
 ## Administrative Roles / Contract Ownership
 
-Administrative privileges on R-token smart contracts are divided into two roles: `Owner` and `Admin`.  We will continue to decentralize administration in future versions.
+Administrative privileges on R-token smart contracts are divided into two roles: `Owner` and `Admin`. We will continue to decentralize administration in future versions.
 
 The privileges for each role are defined below:
 
@@ -90,14 +90,8 @@ The privileges for each role are defined below:
 | Admin      | N/A             | N/A                              | Update Participant Level Settings                                 |
 
 
-## Contributing
-
-Contributions are accepted from all walks of life including aliens (especially green ones).  Just sign the [Contributor's License Agreement (CLA)](https://cla.github.com/agreement) to protect our project so that others can use it with piece of mind.  Submissions will only be accepted after a [Contributor's License Agreement (CLA)](https://cla.github.com/agreement) has been signed.
-
 ## Collaborators
 
 * foobarfighter
 * arisa
 * bonninator
-
-
