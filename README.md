@@ -4,7 +4,7 @@ Smart Contracts for applying regulatory compliance to tokenized securities issua
 
 ## Description
 
-R-Token is a permissioned token on the Ethereum blockchain, enabling token transfers to occur if and only if they are approved by an on-chain Regulator Service. The Regulator Service can be configured to meet relevant securities regulations, Know Your Customer (KYC) policies, Anti-Money Laundering (AML) requirements, tax laws, and more. Implemented with the correct configurations, the R-Token standard makes compliant transfers possible, both on exchanges and person to person, in ICOs and secondary trades, and across jurisdictions. R-Token enables ERC-20 tokens to become regulated securities.
+R-Token is a permissioned token on the Ethereum blockchain, enabling token transfers to occur if and only if they are approved by an on-chain Regulator Service. The Regulator Service can be configured to meet relevant securities regulations, Know Your Customer (KYC) policies, Anti-Money Laundering (AML) requirements, tax laws, and more. Implemented with the correct configurations, the R-Token standard makes compliant transfers possible, both on exchanges and person to person, in ICOs and secondary trades, and across jurisdictions. R-Token enables ERC-20 tokens to be used for regulated securities.
 
 ## How It Works
 
@@ -33,11 +33,11 @@ R-Token implements ERC-20 methods `transfer()` and `transferFrom()` with an addi
 Upgradable, token-level trade permission and participant-level trade permissions.
 
 * Configurable without code modification and need for more security auditing
-* Upgradable so regulator can change business logic as rules evolve over time
-* Regulator can lock/unlock trading for a period of time
-* Regulator can whitelist/blacklist partial token transfers
-* Regulator can qualify/disqualify a trade participant from sending tokens
-* Regulator can qualify/disqualify a trade participant from receiving tokens
+* Upgradable so an owner/admin can change business logic as rules evolve over time
+* An owner/admin can lock/unlock trading for a period of time
+* An owner/admin can whitelist/blacklist partial token transfers
+* An owner/admin can qualify/disqualify a trade participant from sending tokens
+* An owner/admin can qualify/disqualify a trade participant from receiving tokens
 
 ### Upgradable
 
@@ -72,12 +72,6 @@ Participant-level permissions include:
 * `PERM_SEND` - permission for a participant to send a token to another account
 * `PERM_RECV` - permission for a participant to receive a token from another account
 
-
-### Wallet Compatibility
-
-The `RegulatedToken` is compatible with ERC-20 wallets with one additional feature. After `transfer()` or `transferFrom()` are called, a `CheckStatus` event is fired. A `CheckStatus` event with a reason code of `0` indicates success. A non-zero reason code indicates a failure with a reason code that is specific to the `RegulatorService` implementation.
-
-
 ## Administrative Roles / Contract Ownership
 
 Administrative privileges on R-Token smart contracts are divided into two roles: `Owner` and `Admin`. We will continue to decentralize administration in future versions.
@@ -89,9 +83,6 @@ The privileges for each role are defined below:
 | Owner      | Can Mint        | Transfer Owner / Replace Service | Update Token-Level Settings / Transfer Ownership / Transfer Admin |
 | Admin      | N/A             | N/A                              | Update Participant-Level Settings                                 |
 
-
 ## Collaborators
 
 * foobarfighter
-* arisa
-* bonninator
