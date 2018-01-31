@@ -94,6 +94,15 @@ contract('TokenRegulatorService', async (accounts) => {
       await service.setLocked(token.address, true);
       assertResult(await service.check.call(token.address, owner, account, 0), false, ELOCKED);
     });
+
+    it('logs an event', async () => {
+      await service.setLocked(token.address, false);
+
+      await helpers.assertEvent(service.LogLockSet(), {
+        token: token.address,
+        locked: false
+      });
+    });
   });
 
   describe('partial trades', () => {
@@ -111,6 +120,15 @@ contract('TokenRegulatorService', async (accounts) => {
       assert.equal(expectedTotalSupply, await token.totalSupply.call());
 
       assertResult(await service.check.call(token.address, owner, account, 10001111), false, EDIVIS);
+    });
+
+    it('logs an event', async () => {
+      await service.setPartialTransfersEnabled(token.address, true);
+
+      await helpers.assertEvent(service.LogPartialTransferSet(), {
+        token: token.address,
+        enabled: true
+      });
     });
 
     describe('when partial trades are allowed', async () => {
@@ -140,6 +158,15 @@ contract('TokenRegulatorService', async (accounts) => {
         await service.transferAdmin(admin);
         assert.equal(await service.admin(), admin);
       });
+
+      it('logs an event', async () => {
+        await service.transferAdmin(admin);
+
+        await helpers.assertEvent(service.LogTransferAdmin(), {
+          oldAdmin: owner,
+          newAdmin: admin
+        });
+      });
     });
 
     describe('when the new admin is NOT valid', () => {
@@ -153,6 +180,22 @@ contract('TokenRegulatorService', async (accounts) => {
   describe('transfer permissions', () => {
     beforeEach(async () => {
       await service.setLocked(token.address, false);
+    });
+
+    it('logs an event', async () => {
+      await service.setPermission(token.address, account, PERM_SEND);
+
+      const properties = {
+        token: token.address,
+        participant: account,
+        permission: PERM_SEND
+      };
+
+      await helpers.assertEvent(service.LogPermissionSet(), properties, (expected, actual) => {
+        assert.equal(expected.token, actual.token);
+        assert.equal(expected.participant, actual.participant);
+        assert.equal(expected.permission.valueOf(), actual.permission.valueOf());
+      });
     });
 
     describe('when granular permissions are used', () => {

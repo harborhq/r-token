@@ -67,6 +67,18 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   ///      which returns the permission bits of a participant for a particular token.
   mapping(address => mapping(address => uint8)) private participants;
 
+  /// @dev Event raised when a token's locked setting is set
+  event LogLockSet(address token, bool locked);
+
+  /// @dev Event raised when a token's partial transfer setting is set
+  event LogPartialTransferSet(address token, bool enabled);
+
+  /// @dev Event raised when a participant permissions are set for a token
+  event LogPermissionSet(address token, address participant, uint8 permission);
+
+  /// @dev Event raised when the admin address changes
+  event LogTransferAdmin(address oldAdmin, address newAdmin);
+
   function TokenRegulatorService() public {
     admin = msg.sender;
   }
@@ -80,6 +92,8 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    */
   function setLocked(address _token, bool _locked) onlyOwner public {
     settings[_token].unlocked = !_locked;
+
+    LogLockSet(_token, _locked);
   }
 
   /**
@@ -91,6 +105,8 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    */
   function setPartialTransfersEnabled(address _token, bool _enabled) onlyOwner public {
    settings[_token].partialTransfers = _enabled;
+
+   LogPartialTransferSet(_token, _enabled);
   }
 
   /**
@@ -106,6 +122,8 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    */
   function setPermission(address _token, address _participant, uint8 _permission) onlyAdmins public {
     participants[_token][_participant] = _permission;
+
+    LogPermissionSet(_token, _participant, _permission);
   }
 
   /**
@@ -115,7 +133,11 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    */
   function transferAdmin(address newAdmin) onlyOwner public {
     require(newAdmin != address(0));
+
+    var oldAdmin = admin;
     admin = newAdmin;
+
+    LogTransferAdmin(oldAdmin, newAdmin);
   }
 
   /**
