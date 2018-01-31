@@ -11,7 +11,7 @@ contract MockRegulatorService is RegulatorService  {
     reason = _reason;
   }
 
-  function check(address, address, address, uint256) constant public returns (uint8) {
+  function check(address, address, address, uint256) public returns (uint8) {
     return reason;
   }
 }

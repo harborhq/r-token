@@ -153,7 +153,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @return `true` if the trade should be approved and  `false` if the trade should not be approved
    */
-  function check(address _token, address _from, address _to, uint256 _amount) constant public returns (uint8) {
+  function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8) {
     if (!settings[_token].unlocked) {
       return CHECK_ELOCKED;
     }
