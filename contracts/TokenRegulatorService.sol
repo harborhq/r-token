@@ -134,7 +134,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   function transferAdmin(address newAdmin) onlyOwner public {
     require(newAdmin != address(0));
 
-    var oldAdmin = admin;
+    address oldAdmin = admin;
     admin = newAdmin;
 
     LogTransferAdmin(oldAdmin, newAdmin);
