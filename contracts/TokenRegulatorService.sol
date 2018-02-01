@@ -149,7 +149,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    * @param  _token The address of the token to be transfered
    * @param  _spender The address of the spender of the token (unused in this implementation)
    * @param  _from The address of the sender account
-   * @param  _from The address of the receiver account
+   * @param  _to The address of the receiver account
    * @param  _amount The quantity of the token to trade
    *
    * @return `true` if the trade should be approved and  `false` if the trade should not be approved
