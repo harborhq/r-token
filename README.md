@@ -2,6 +2,7 @@
 
 Smart Contracts for applying regulatory compliance to tokenized securities issuance and trading
 
+
 ## Description
 
 R-Token is a permissioned token on the Ethereum blockchain, enabling token transfers to occur if and only if they are approved by an on-chain Regulator Service. The Regulator Service can be configured to meet relevant securities regulations, Know Your Customer (KYC) policies, Anti-Money Laundering (AML) requirements, tax laws, and more. Implemented with the correct configurations, the R-Token standard makes compliant transfers possible, both on exchanges and person to person, in ICOs and secondary trades, and across jurisdictions. R-Token enables ERC-20 tokens to be used for regulated securities.
@@ -86,3 +87,7 @@ The privileges for each role are defined below:
 ## Collaborators
 
 * foobarfighter
+
+## Discussion Forum
+
+Have questions or want to contribute?  Ping the team and join the conversation at https://gitter.im/harborhq. 
