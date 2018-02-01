@@ -11,6 +11,7 @@ contract RegulatorService {
    *         more information needed to enforce trade approval.
    *
    * @param  _token The address of the token to be transfered
+   * @param  _spender The address of the spender of the token
    * @param  _from The address of the sender account
    * @param  _to The address of the receiver account
    * @param  _amount The quantity of the token to trade
@@ -18,5 +19,5 @@ contract RegulatorService {
    * @return uint8 The reason code: 0 means success.  Non-zero values are left to the implementation
    *               to assign meaning.
    */
-  function check(address _token, address _from, address _to, uint256 _amount) public returns (uint8);
+  function check(address _token, address _spender, address _from, address _to, uint256 _amount) public returns (uint8);
 }

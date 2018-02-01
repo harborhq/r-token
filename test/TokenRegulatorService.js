@@ -14,10 +14,11 @@ const ESEND = 3;
 const ERECV = 4;
 
 contract('TokenRegulatorService', async (accounts) => {
-  let owner, account, token, service;
+  let owner, spender, account, token, service;
 
   beforeEach(async () => {
     owner = accounts[0];
+    spender = owner;
     admin = accounts[1]
     account = accounts[2];
     other = accounts[3];
@@ -84,15 +85,15 @@ contract('TokenRegulatorService', async (accounts) => {
     });
 
     it('is locked by default', async () => {
-      assertResult(await service.check.call(token.address, owner, account, 0), false, ELOCKED);
+      assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ELOCKED);
     });
 
     it('toggles the ability to trade', async () => {
-      assertResult(await service.check.call(token.address, owner, account, 0), false, ELOCKED);
+      assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ELOCKED);
       await service.setLocked(token.address, false);
-      assertResult(await service.check.call(token.address, owner, account, 0), true, ENONE);
+      assertResult(await service.check.call(token.address, spender, owner, account, 0), true, ENONE);
       await service.setLocked(token.address, true);
-      assertResult(await service.check.call(token.address, owner, account, 0), false, ELOCKED);
+      assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ELOCKED);
     });
 
     it('logs an event', async () => {
@@ -119,7 +120,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
       assert.equal(expectedTotalSupply, await token.totalSupply.call());
 
-      assertResult(await service.check.call(token.address, owner, account, 10001111), false, EDIVIS);
+      assertResult(await service.check.call(token.address, spender, owner, account, 10001111), false, EDIVIS);
     });
 
     it('logs an event', async () => {
@@ -134,16 +135,16 @@ contract('TokenRegulatorService', async (accounts) => {
     describe('when partial trades are allowed', async () => {
       it('allows fractional trades', async () => {
         await service.setPartialTransfersEnabled(token.address, true);
-        assertResult(await service.check.call(token.address, owner, account, 10001111), true, ENONE);
-        assertResult(await service.check.call(token.address, owner, account, 10000000), true, ENONE);
+        assertResult(await service.check.call(token.address, spender, owner, account, 10001111), true, ENONE);
+        assertResult(await service.check.call(token.address, spender, owner, account, 10000000), true, ENONE);
       });
     });
 
     describe('when partial trades are NOT allowed', async () => {
       it('does NOT allow fractional trades', async () => {
         await service.setPartialTransfersEnabled(token.address, false);
-        assertResult(await service.check.call(token.address, owner, account, 10000000), true, ENONE);
-        assertResult(await service.check.call(token.address, owner, account, 10001111), false, EDIVIS);
+        assertResult(await service.check.call(token.address, spender, owner, account, 10000000), true, ENONE);
+        assertResult(await service.check.call(token.address, spender, owner, account, 10001111), false, EDIVIS);
       });
     });
   });
@@ -203,24 +204,24 @@ contract('TokenRegulatorService', async (accounts) => {
         await service.setPermission(token.address, owner, PERM_SEND);
         await service.setPermission(token.address, account, PERM_RECEIVE);
 
-        assertResult(await service.check.call(token.address, owner, account, 0), true, ENONE);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), true, ENONE);
 
         await service.setPermission(token.address, owner, PERM_RECEIVE);
         await service.setPermission(token.address, account, PERM_RECEIVE);
 
-        assertResult(await service.check.call(token.address, owner, account, 0), false, ESEND);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ESEND);
       });
 
       it('requires a receiver to have receive permissions', async () => {
         await service.setPermission(token.address, owner, PERM_SEND);
         await service.setPermission(token.address, account, PERM_RECEIVE);
 
-        assertResult(await service.check.call(token.address, owner, account, 0), true, ENONE);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), true, ENONE);
 
         await service.setPermission(token.address, owner, PERM_TRANSFER);
         await service.setPermission(token.address, account, PERM_SEND);
 
-        assertResult(await service.check.call(token.address, owner, account, 0), false, ERECV);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ERECV);
       });
     });
 
@@ -228,12 +229,12 @@ contract('TokenRegulatorService', async (accounts) => {
       beforeEach(async () => {
         await service.setPermission(token.address, owner, PERM_TRANSFER);
         await service.setPermission(token.address, account, PERM_TRANSFER);
-        assertResult(await service.check.call(token.address, owner, account, 0), true, ENONE);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), true, ENONE);
       });
 
       it('denies trades', async () => {
-        assertResult(await service.check.call(token.address, owner, '0x0', 0), false, ERECV);
-        assertResult(await service.check.call(token.address, '0x0', owner, 0), false, ESEND);
+        assertResult(await service.check.call(token.address, spender, owner, '0x0', 0), false, ERECV);
+        assertResult(await service.check.call(token.address, spender, '0x0', owner, 0), false, ESEND);
       });
     });
 
@@ -241,13 +242,13 @@ contract('TokenRegulatorService', async (accounts) => {
       beforeEach(async () => {
         await service.setPermission(token.address, owner, PERM_NONE);
         await service.setPermission(token.address, account, PERM_NONE);
-        assertResult(await service.check.call(token.address, owner, account, 0), false, ESEND);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ESEND);
       });
 
       it('allows trades', async () => {
         await service.setPermission(token.address, owner, PERM_TRANSFER);
         await service.setPermission(token.address, account, PERM_TRANSFER);
-        assertResult(await service.check.call(token.address, owner, account, 0), true, ENONE);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), true, ENONE);
       });
     });
 
@@ -255,19 +256,19 @@ contract('TokenRegulatorService', async (accounts) => {
       beforeEach(async () => {
         await service.setPermission(token.address, owner, PERM_TRANSFER);
         await service.setPermission(token.address, account, PERM_TRANSFER);
-        assertResult(await service.check.call(token.address, owner, account, 0), true, ENONE);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), true, ENONE);
       });
 
       it('prevents trades', async () => {
         await service.setPermission(token.address, owner, PERM_TRANSFER);
         await service.setPermission(token.address, account, PERM_NONE);
 
-        assertResult(await service.check.call(token.address, owner, account, 0), false, ERECV);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ERECV);
 
         await service.setPermission(token.address, owner, PERM_NONE);
         await service.setPermission(token.address, account, PERM_TRANSFER);
 
-        assertResult(await service.check.call(token.address, owner, account, 0), false, ESEND);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ESEND);
       });
     });
 
@@ -275,13 +276,13 @@ contract('TokenRegulatorService', async (accounts) => {
       beforeEach(async () => {
         await service.setPermission(token.address, owner, PERM_TRANSFER);
         await service.setPermission(token.address, account, PERM_TRANSFER);
-        assertResult(await service.check.call(token.address, owner, account, 0), true, ENONE);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), true, ENONE);
       });
 
       it('prevents trades', async () => {
         await service.setPermission(token.address, owner, PERM_NONE);
         await service.setPermission(token.address, account, PERM_NONE);
-        assertResult(await service.check.call(token.address, owner, account, 0), false, ESEND);
+        assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ESEND);
       });
     });
   });

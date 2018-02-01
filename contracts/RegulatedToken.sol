@@ -16,7 +16,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   /**
    * @notice Triggered when regulator checks pass or fail
    */
-  event CheckStatus(uint8 reason, address from, address to, uint256 value);
+  event CheckStatus(uint8 reason, address spender, address from, address to, uint256 value);
 
   /**
    * @notice Address of the `ServiceRegistry` that has the location of the
@@ -85,9 +85,9 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @return `true` if the check was successful and `false` if unsuccessful
    */
   function _check(address _from, address _to, uint256 _value) private returns (bool) {
-    var reason = _service().check(this, _from, _to, _value);
+    var reason = _service().check(this, msg.sender, _from, _to, _value);
 
-    CheckStatus(reason, _from, _to, _value);
+    CheckStatus(reason, msg.sender, _from, _to, _value);
 
     return reason == 0;
   }
