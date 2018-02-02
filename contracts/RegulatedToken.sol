@@ -10,7 +10,7 @@ contract RegulatedToken is MintableToken {
   /**
    * @notice Triggered when regulator checks pass or fail
    */
-  event CheckStatus(uint8 reason);
+  event CheckStatus(uint8 reason, address from, address to, uint256 value);
 
   /**
    * @notice Address of the `ServiceRegistry` that has the location of the
@@ -24,24 +24,17 @@ contract RegulatedToken is MintableToken {
    *
    * @param _registry Address of `ServiceRegistry` contract
    */
-  function RegulatedToken(address _registry) public {
-    registry = ServiceRegistry(_registry);
+  function RegulatedToken(ServiceRegistry _registry) public {
+    require(_registry != address(0));
+
+    registry = _registry;
   }
 
   /**
    * @notice The max precision for a partial token
    */
-  function decimals() pure public returns (uint256) {
+  function decimals() pure public returns (uint8) {
     return 18;
-  }
-
-  /**
-   * @notice Returns whether or not this token is regulated
-   *
-   * @return `true` if regulated and `false` if not regulated
-   */
-  function isRegulated() constant public returns (bool) {
-    return registry != address(0);
   }
 
   /**
@@ -55,9 +48,9 @@ contract RegulatedToken is MintableToken {
   function transfer(address _to, uint256 _value) public returns (bool) {
     if (!_check(msg.sender, _to, _value)) {
       return false;
+    } else {
+      return super.transfer(_to, _value);
     }
-
-    return super.transfer(_to, _value);
   }
 
   /**
@@ -72,9 +65,9 @@ contract RegulatedToken is MintableToken {
   function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
     if (!_check(_from, _to, _value)){
       return false;
+    } else {
+      return super.transferFrom(_from, _to, _value);
     }
-
-    return super.transferFrom(_from, _to, _value);
   }
 
   /**
@@ -91,7 +84,7 @@ contract RegulatedToken is MintableToken {
   function _check(address _from, address _to, uint256 _value) private returns (bool) {
     var reason = _service().check(this, _from, _to, _value);
 
-    CheckStatus(reason);
+    CheckStatus(reason, _from, _to, _value);
 
     return reason == 0;
   }

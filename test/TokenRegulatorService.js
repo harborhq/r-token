@@ -46,10 +46,8 @@ contract('TokenRegulatorService', async (accounts) => {
   }
 
   describe('permissions', () => {
-    onlyOwner('lock', () => { return [service, token.address] });
-    onlyOwner('unlock', () => { return [service, token.address] });
-    onlyOwner('allowPartialTransfers', () => { return [service, token.address] });
-    onlyOwner('disallowPartialTransfers', () => { return [service, token.address] });
+    onlyOwner('setLocked', () => { return [service, token.address, true] });
+    onlyOwner('setPartialTransfersEnabled', () => { return [service, token.address, true] });
     onlyOwner('setPermission', () => { return [service, token.address, account, 0] });
     onlyOwner('transferAdmin', () => { return [service, account] });
 
@@ -91,16 +89,16 @@ contract('TokenRegulatorService', async (accounts) => {
 
     it('toggles the ability to trade', async () => {
       assertResult(await service.check.call(token.address, owner, account, 0), false, ELOCKED);
-      await service.unlock(token.address);
+      await service.setLocked(token.address, false);
       assertResult(await service.check.call(token.address, owner, account, 0), true, ENONE);
-      await service.lock(token.address);
+      await service.setLocked(token.address, true);
       assertResult(await service.check.call(token.address, owner, account, 0), false, ELOCKED);
     });
   });
 
   describe('partial trades', () => {
     beforeEach(async () => {
-      await service.unlock(token.address);
+      await service.setLocked(token.address, false);
       await service.setPermission(token.address, owner, PERM_TRANSFER);
       await service.setPermission(token.address, account, PERM_TRANSFER);
 
@@ -117,7 +115,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
     describe('when partial trades are allowed', async () => {
       it('allows fractional trades', async () => {
-        await service.allowPartialTransfers(token.address);
+        await service.setPartialTransfersEnabled(token.address, true);
         assertResult(await service.check.call(token.address, owner, account, 10001111), true, ENONE);
         assertResult(await service.check.call(token.address, owner, account, 10000000), true, ENONE);
       });
@@ -125,7 +123,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
     describe('when partial trades are NOT allowed', async () => {
       it('does NOT allow fractional trades', async () => {
-        await service.disallowPartialTransfers(token.address);
+        await service.setPartialTransfersEnabled(token.address, false);
         assertResult(await service.check.call(token.address, owner, account, 10000000), true, ENONE);
         assertResult(await service.check.call(token.address, owner, account, 10001111), false, EDIVIS);
       });
@@ -134,7 +132,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
   describe('permissions', async () => {
     beforeEach(async () => {
-      await service.unlock(token.address);
+      await service.setLocked(token.address, false);
     });
 
     describe('when granular permissions are used', () => {

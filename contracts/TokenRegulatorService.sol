@@ -75,19 +75,8 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to lock
    */
-  function lock(address _token) onlyOwner public {
-    settings[_token].unlocked = false;
-  }
-
-  /**
-   * @notice Unlocks the ability to trade a token
-   *
-   * @dev    This method can only be called by this contract's owner
-   *
-   * @param  _token The address of the token to lock
-   */
-  function unlock(address _token) onlyOwner public {
-    settings[_token].unlocked = true;
+  function setLocked(address _token, bool _locked) onlyOwner public {
+    settings[_token].unlocked = !_locked;
   }
 
   /**
@@ -97,19 +86,8 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to allow partial transfers
    */
-  function allowPartialTransfers(address _token) onlyOwner public {
-   settings[_token].partialTransfers = true;
-  }
-
-  /**
-   * @notice Disallows the ability to trade a fraction of a token
-   *
-   * @dev    This method can only be called by this contract's owner
-   *
-   * @param  _token The address of the token to allow partial transfers
-   */
-  function disallowPartialTransfers(address _token) onlyOwner public {
-   settings[_token].partialTransfers = false;
+  function setPartialTransfersEnabled(address _token, bool _enabled) onlyOwner public {
+   settings[_token].partialTransfers = _enabled;
   }
 
   /**
@@ -164,7 +142,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
       return CHECK_ERECV;
     }
 
-    if (!settings[_token].partialTransfers && _amount % 10**_decimals(_token) != 0) {
+    if (!settings[_token].partialTransfers && _amount % _wholeToken(_token) != 0) {
       return CHECK_EDIVIS;
     }
 
@@ -172,13 +150,13 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   }
 
   /**
-   * @notice Retrieve the `decimals` setting from a token that this `RegulatorService` manages
+   * @notice Retrieves the whole token value from a token that this `RegulatorService` manages
    *
    * @param  _token The token address of the managed token
    *
-   * @return The number of decimals
+   * @return The uint256 value that represents a single whole token
    */
-  function _decimals(address _token) pure private returns (uint256) {
-    return RegulatedToken(_token).decimals();
+  function _wholeToken(address _token) pure private returns (uint256) {
+    return uint256(10)**RegulatedToken(_token).decimals();
   }
 }
