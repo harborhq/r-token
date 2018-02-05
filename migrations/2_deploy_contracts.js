@@ -9,7 +9,7 @@ module.exports = async function(deployer) {
     return deployer.deploy(ServiceRegistry, regulator.address);
   }).then(async () => {
     const registry = await ServiceRegistry.deployed();
-    return deployer.deploy(RegulatedToken, registry.address);
+    return deployer.deploy(RegulatedToken, registry.address, "Example", "EXPL");
   }).then(async () => {
     const token = await RegulatedToken.deployed();
   });

@@ -1,6 +1,7 @@
 pragma solidity ^0.4.18;
 
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
+import 'zeppelin-solidity/contracts/token/DetailedERC20.sol';
 import './RegulatedToken.sol';
 import './RegulatorService.sol';
 
@@ -59,10 +60,24 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   address public admin;
 
   /// @notice Permissions that allow/disallow token trades on a per token level
-  mapping(address => Settings) settings;
+  mapping(address => Settings) private settings;
 
-  /// @notice Permissions that allow/disallow token trades on a per participant basis
-  mapping(address => mapping(address => uint8)) participants;
+  /// @dev Permissions that allow/disallow token trades on a per participant basis.
+  ///      The format for key based access is `participants[tokenAddress][participantAddress]`
+  ///      which returns the permission bits of a participant for a particular token.
+  mapping(address => mapping(address => uint8)) private participants;
+
+  /// @dev Event raised when a token's locked setting is set
+  event LogLockSet(address token, bool locked);
+
+  /// @dev Event raised when a token's partial transfer setting is set
+  event LogPartialTransferSet(address token, bool enabled);
+
+  /// @dev Event raised when a participant permissions are set for a token
+  event LogPermissionSet(address token, address participant, uint8 permission);
+
+  /// @dev Event raised when the admin address changes
+  event LogTransferAdmin(address oldAdmin, address newAdmin);
 
   function TokenRegulatorService() public {
     admin = msg.sender;
@@ -75,19 +90,10 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to lock
    */
-  function lock(address _token) onlyOwner public {
-    settings[_token].unlocked = false;
-  }
+  function setLocked(address _token, bool _locked) onlyOwner public {
+    settings[_token].unlocked = !_locked;
 
-  /**
-   * @notice Unlocks the ability to trade a token
-   *
-   * @dev    This method can only be called by this contract's owner
-   *
-   * @param  _token The address of the token to lock
-   */
-  function unlock(address _token) onlyOwner public {
-    settings[_token].unlocked = true;
+    LogLockSet(_token, _locked);
   }
 
   /**
@@ -97,19 +103,10 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to allow partial transfers
    */
-  function allowPartialTransfers(address _token) onlyOwner public {
-   settings[_token].partialTransfers = true;
-  }
+  function setPartialTransfersEnabled(address _token, bool _enabled) onlyOwner public {
+   settings[_token].partialTransfers = _enabled;
 
-  /**
-   * @notice Disallows the ability to trade a fraction of a token
-   *
-   * @dev    This method can only be called by this contract's owner
-   *
-   * @param  _token The address of the token to allow partial transfers
-   */
-  function disallowPartialTransfers(address _token) onlyOwner public {
-   settings[_token].partialTransfers = false;
+   LogPartialTransferSet(_token, _enabled);
   }
 
   /**
@@ -125,17 +122,22 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    */
   function setPermission(address _token, address _participant, uint8 _permission) onlyAdmins public {
     participants[_token][_participant] = _permission;
+
+    LogPermissionSet(_token, _participant, _permission);
   }
 
   /**
-   * @dev Allows the current admin to transfer control of the contract to a newAdmin.
+   * @dev Allows the owner to transfer admin controls to newAdmin.
    *
-   * @param newAdmin The address to transfer ownership to.
+   * @param newAdmin The address to transfer admin rights to.
    */
   function transferAdmin(address newAdmin) onlyOwner public {
-    if (newAdmin != address(0)) {
-      admin = newAdmin;
-    }
+    require(newAdmin != address(0));
+
+    address oldAdmin = admin;
+    admin = newAdmin;
+
+    LogTransferAdmin(oldAdmin, newAdmin);
   }
 
   /**
@@ -145,13 +147,14 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *         information needed to enforce trade approval if needed
    *
    * @param  _token The address of the token to be transfered
+   * @param  _spender The address of the spender of the token (unused in this implementation)
    * @param  _from The address of the sender account
-   * @param  _from The address of the receiver account
+   * @param  _to The address of the receiver account
    * @param  _amount The quantity of the token to trade
    *
    * @return `true` if the trade should be approved and  `false` if the trade should not be approved
    */
-  function check(address _token, address _from, address _to, uint256 _amount) constant public returns (uint8) {
+  function check(address _token, address _spender, address _from, address _to, uint256 _amount) public returns (uint8) {
     if (!settings[_token].unlocked) {
       return CHECK_ELOCKED;
     }
@@ -164,7 +167,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
       return CHECK_ERECV;
     }
 
-    if (!settings[_token].partialTransfers && _amount % 10**_decimals(_token) != 0) {
+    if (!settings[_token].partialTransfers && _amount % _wholeToken(_token) != 0) {
       return CHECK_EDIVIS;
     }
 
@@ -172,13 +175,13 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   }
 
   /**
-   * @notice Retrieve the `decimals` setting from a token that this `RegulatorService` manages
+   * @notice Retrieves the whole token value from a token that this `RegulatorService` manages
    *
    * @param  _token The token address of the managed token
    *
-   * @return The number of decimals
+   * @return The uint256 value that represents a single whole token
    */
-  function _decimals(address _token) pure private returns (uint256) {
-    return RegulatedToken(_token).decimals();
+  function _wholeToken(address _token) view private returns (uint256) {
+    return uint256(10)**DetailedERC20(_token).decimals();
   }
 }
