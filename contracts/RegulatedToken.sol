@@ -9,9 +9,9 @@ import './RegulatorService.sol';
 contract RegulatedToken is DetailedERC20, MintableToken {
 
   /**
-   * @notice Decimals per DetailedERC20
+   * @notice R-Token decimals setting (used when constructing DetailedERC20)
    */
-  uint8 constant public DECIMALS = 18;
+  uint8 constant public RTOKEN_DECIMALS = 18;
 
   /**
    * @notice Triggered when regulator checks pass or fail
@@ -33,7 +33,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @param _symbol Symbol of the token: See DetailedERC20
    */
   function RegulatedToken(ServiceRegistry _registry, string _name, string _symbol) public
-    DetailedERC20(_name, _symbol, DECIMALS)
+    DetailedERC20(_name, _symbol, RTOKEN_DECIMALS)
   {
     require(_registry != address(0));
 
