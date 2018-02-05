@@ -68,16 +68,16 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   mapping(address => mapping(address => uint8)) private participants;
 
   /// @dev Event raised when a token's locked setting is set
-  event LogLockSet(address token, bool locked);
+  event LogLockSet(address indexed token, bool locked);
 
   /// @dev Event raised when a token's partial transfer setting is set
-  event LogPartialTransferSet(address token, bool enabled);
+  event LogPartialTransferSet(address indexed token, bool enabled);
 
   /// @dev Event raised when a participant permissions are set for a token
-  event LogPermissionSet(address token, address participant, uint8 permission);
+  event LogPermissionSet(address indexed token, address indexed participant, uint8 permission);
 
   /// @dev Event raised when the admin address changes
-  event LogTransferAdmin(address oldAdmin, address newAdmin);
+  event LogTransferAdmin(address indexed oldAdmin, address indexed newAdmin);
 
   function TokenRegulatorService() public {
     admin = msg.sender;
