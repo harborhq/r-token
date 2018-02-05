@@ -16,7 +16,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   /**
    * @notice Triggered when regulator checks pass or fail
    */
-  event CheckStatus(uint8 reason, address spender, address from, address to, uint256 value);
+  event CheckStatus(uint8 reason, address indexed spender, address indexed from, address indexed to, uint256 value);
 
   /**
    * @notice Address of the `ServiceRegistry` that has the location of the
