@@ -84,16 +84,11 @@ contract('TokenRegulatorService', async (accounts) => {
       await service.setPermission(token.address, account, PERM_TRANSFER);
     });
 
-    it('is locked by default', async () => {
-      assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ELOCKED);
-    });
-
     it('toggles the ability to trade', async () => {
+      await service.setLocked(token.address, true);
       assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ELOCKED);
       await service.setLocked(token.address, false);
       assertResult(await service.check.call(token.address, spender, owner, account, 0), true, ENONE);
-      await service.setLocked(token.address, true);
-      assertResult(await service.check.call(token.address, spender, owner, account, 0), false, ELOCKED);
     });
 
     it('logs an event', async () => {
