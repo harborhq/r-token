@@ -2,6 +2,9 @@
 
 Smart Contracts for applying regulatory compliance to tokenized securities issuance and trading
 
+## Feedback
+
+We would love your feedback.  Have questions, want to contribute, or have general comments?  Ping the team and join the conversation at https://gitter.im/harborhq.
 
 ## Description
 
@@ -83,11 +86,3 @@ The privileges for each role are defined below:
 |:-----------|:--------------- |:-------------------------------- |:----------------------------------------------------------------- |
 | Owner      | Can Mint        | Transfer Owner / Replace Service | Update Token-Level Settings / Transfer Ownership / Transfer Admin |
 | Admin      | N/A             | N/A                              | Update Participant-Level Settings                                 |
-
-## Collaborators
-
-* foobarfighter
-
-## Discussion Forum
-
-Have questions or want to contribute?  Ping the team and join the conversation at https://gitter.im/harborhq. 
