@@ -103,7 +103,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to allow partial transfers
    */
-  function setPartialTransfersEnabled(address _token, bool _enabled) onlyOwner public {
+  function setPartialTransfers(address _token, bool _enabled) onlyOwner public {
    settings[_token].partialTransfers = _enabled;
 
    LogPartialTransferSet(_token, _enabled);

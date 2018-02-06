@@ -48,7 +48,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
   describe('permissions', () => {
     onlyOwner('setLocked', () => { return [service, token.address, true] });
-    onlyOwner('setPartialTransfersEnabled', () => { return [service, token.address, true] });
+    onlyOwner('setPartialTransfers', () => { return [service, token.address, true] });
     onlyOwner('setPermission', () => { return [service, token.address, account, 0] });
     onlyOwner('transferAdmin', () => { return [service, account] });
 
@@ -119,7 +119,7 @@ contract('TokenRegulatorService', async (accounts) => {
     });
 
     it('logs an event', async () => {
-      await service.setPartialTransfersEnabled(token.address, true);
+      await service.setPartialTransfers(token.address, true);
 
       await helpers.assertEvent(service.LogPartialTransferSet(), {
         token: token.address,
@@ -129,7 +129,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
     describe('when partial trades are allowed', async () => {
       it('allows fractional trades', async () => {
-        await service.setPartialTransfersEnabled(token.address, true);
+        await service.setPartialTransfers(token.address, true);
         assertResult(await service.check.call(token.address, spender, owner, account, 10001111), true, ENONE);
         assertResult(await service.check.call(token.address, spender, owner, account, 10000000), true, ENONE);
       });
@@ -137,7 +137,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
     describe('when partial trades are NOT allowed', async () => {
       it('does NOT allow fractional trades', async () => {
-        await service.setPartialTransfersEnabled(token.address, false);
+        await service.setPartialTransfers(token.address, false);
         assertResult(await service.check.call(token.address, spender, owner, account, 10000000), true, ENONE);
         assertResult(await service.check.call(token.address, spender, owner, account, 10001111), false, EDIVIS);
       });
