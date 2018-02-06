@@ -23,9 +23,9 @@ contract TokenRegulatorService is RegulatorService, Ownable {
 
     /**
      * @dev Toggle for locking/unlocking trades at a token level.
-     *      The default state when this contract is created `false` (or locked)
+     *      The default behavior of the zero memory state for locking will be unlocked.
      */
-    bool unlocked;
+    bool locked;
 
     /**
      * @dev Toggle for allowing/disallowing fractional token trades at a token level.
@@ -68,16 +68,16 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   mapping(address => mapping(address => uint8)) private participants;
 
   /// @dev Event raised when a token's locked setting is set
-  event LogLockSet(address token, bool locked);
+  event LogLockSet(address indexed token, bool locked);
 
   /// @dev Event raised when a token's partial transfer setting is set
-  event LogPartialTransferSet(address token, bool enabled);
+  event LogPartialTransferSet(address indexed token, bool enabled);
 
   /// @dev Event raised when a participant permissions are set for a token
-  event LogPermissionSet(address token, address participant, uint8 permission);
+  event LogPermissionSet(address indexed token, address indexed participant, uint8 permission);
 
   /// @dev Event raised when the admin address changes
-  event LogTransferAdmin(address oldAdmin, address newAdmin);
+  event LogTransferAdmin(address indexed oldAdmin, address indexed newAdmin);
 
   function TokenRegulatorService() public {
     admin = msg.sender;
@@ -91,7 +91,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    * @param  _token The address of the token to lock
    */
   function setLocked(address _token, bool _locked) onlyOwner public {
-    settings[_token].unlocked = !_locked;
+    settings[_token].locked = _locked;
 
     LogLockSet(_token, _locked);
   }
@@ -103,7 +103,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    *
    * @param  _token The address of the token to allow partial transfers
    */
-  function setPartialTransfersEnabled(address _token, bool _enabled) onlyOwner public {
+  function setPartialTransfers(address _token, bool _enabled) onlyOwner public {
    settings[_token].partialTransfers = _enabled;
 
    LogPartialTransferSet(_token, _enabled);
@@ -155,7 +155,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    * @return `true` if the trade should be approved and  `false` if the trade should not be approved
    */
   function check(address _token, address _spender, address _from, address _to, uint256 _amount) public returns (uint8) {
-    if (!settings[_token].unlocked) {
+    if (settings[_token].locked) {
       return CHECK_ELOCKED;
     }
 
