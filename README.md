@@ -68,7 +68,7 @@ In the `TokenRegulatorService` implementation of the `RegulatorService` interfac
 
 Token-level permissions include:
 
-* `unlocked` - controls locking and unlocking of all token trades for a particular token
+* `locked` - controls locking and unlocking of all token trades for a particular token
 * `partialAmounts` - allows or disallows transfers of partial token amounts
 
 Participant-level permissions include:
