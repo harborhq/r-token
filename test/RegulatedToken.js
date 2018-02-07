@@ -55,7 +55,7 @@ contract('RegulatedToken', async function(accounts) {
 
   describe('constructor', () => {
     it('requires a non-zero registry argument', async () => {
-      await helpers.expectThrow(RegulatedToken.new(0));
+      await helpers.expectThrow(RegulatedToken.new(0, 'TEST', 'Test'));
     });
   });
 
