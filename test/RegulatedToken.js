@@ -1,4 +1,4 @@
-const helpers = require("./helpers");
+const helpers = require("./helpers"),
       RegulatedToken = artifacts.require("./RegulatedToken.sol"),
       ServiceRegistry = artifacts.require("./ServiceRegistry.sol"),
       MockRegulatorService = artifacts.require("../test/helpers/MockRegulatorService.sol"),
