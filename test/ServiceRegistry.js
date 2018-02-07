@@ -1,11 +1,16 @@
-var helpers = require("./helpers");
-var RegulatedToken = artifacts.require("./RegulatedToken.sol");
-var ServiceRegistry = artifacts.require("./ServiceRegistry.sol");
-var MockRegulatorService = artifacts.require("../test/helpers/MockRegulatorService.sol");
+const helpers = require('./helpers');
+const RegulatedToken = artifacts.require('./RegulatedToken.sol');
+const ServiceRegistry = artifacts.require('./ServiceRegistry.sol');
+const MockRegulatorService = artifacts.require('../test/helpers/MockRegulatorService.sol');
 
-contract('ServiceRegistry', async (accounts) => {
-  let owner, newOwner, hacker, participant;
-  let service, registry;
+contract('ServiceRegistry', async accounts => {
+  let owner;
+  let newOwner;
+  let hacker;
+  let participant;
+
+  let service;
+  let registry;
 
   beforeEach(async () => {
     owner = accounts[0];
@@ -19,14 +24,10 @@ contract('ServiceRegistry', async (accounts) => {
 
   describe('ownership', () => {
     it('allows ownership transfer', async () => {
-      await helpers.expectThrow(
-        registry.transferOwnership(newOwner, { from: hacker })
-      );
+      await helpers.expectThrow(registry.transferOwnership(newOwner, { from: hacker }));
       await registry.transferOwnership(newOwner, { from: owner });
 
-      await helpers.expectThrow(
-        registry.transferOwnership(hacker, { from: owner })
-      );
+      await helpers.expectThrow(registry.transferOwnership(hacker, { from: owner }));
       await registry.transferOwnership(hacker, { from: newOwner });
     });
   });
@@ -49,8 +50,8 @@ contract('ServiceRegistry', async (accounts) => {
 
       await helpers.assertEvent(event, {
         oldService: service.address,
-        newService: newService.address
-      })
+        newService: newService.address,
+      });
     });
 
     it('should NOT allow an invalid address', async () => {
@@ -60,9 +61,7 @@ contract('ServiceRegistry', async (accounts) => {
     });
 
     it('should NOT allow anybody except for the owner to replace the service', async () => {
-      await helpers.expectThrow(
-        registry.replaceService(newService.address, { from: hacker })
-      );
+      await helpers.expectThrow(registry.replaceService(newService.address, { from: hacker }));
       assert.equal(await registry.service(), service.address);
     });
   });
