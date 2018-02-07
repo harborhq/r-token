@@ -1,6 +1,6 @@
-var helpers = require('./helpers');
-var MockRegulatedToken = artifacts.require('../test/helpers/MockRegulatedToken.sol');
-var TokenRegulatorService = artifacts.require('./TokenRegulatorService.sol');
+const helpers = require('./helpers');
+const MockRegulatedToken = artifacts.require('../test/helpers/MockRegulatedToken.sol');
+const TokenRegulatorService = artifacts.require('./TokenRegulatorService.sol');
 
 const PERM_NONE = 0x0;
 const PERM_SEND = 0x1;
@@ -14,7 +14,11 @@ const ESEND = 3;
 const ERECV = 4;
 
 contract('TokenRegulatorService', async accounts => {
-  let owner, spender, account, token, service;
+  let owner;
+  let spender;
+  let account;
+  let token;
+  let service;
 
   beforeEach(async () => {
     owner = accounts[0];
@@ -29,14 +33,14 @@ contract('TokenRegulatorService', async accounts => {
 
   const onlyOwner = (method, producer) => {
     it(method + ' requires owner permissions', async () => {
-      let [service, ...args] = producer();
+      const [serviceToTest, ...args] = producer();
 
-      let acct = accounts[accounts.length - 1];
+      const acct = accounts[accounts.length - 1];
 
       assert.isTrue(!!acct);
       assert.isTrue(acct != accounts[0]);
 
-      await helpers.expectThrow(service[method](...args, { from: acct }));
+      await helpers.expectThrow(serviceToTest[method](...args, { from: acct }));
     });
   };
 
@@ -111,8 +115,8 @@ contract('TokenRegulatorService', async accounts => {
       await service.setPermission(token.address, owner, PERM_TRANSFER);
       await service.setPermission(token.address, account, PERM_TRANSFER);
 
-      const decimals = 4,
-        expectedTotalSupply = 2000 * 10 ** decimals;
+      const decimals = 4;
+      const expectedTotalSupply = 2000 * 10 ** decimals;
 
       await token.setDecimals(decimals);
       await token.mint(owner, expectedTotalSupply);

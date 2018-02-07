@@ -20,7 +20,7 @@ exports.expectThrow = async promise => {
 
 exports.assertEvent = (event, args, assertEqual = assert.deepEqual, timeout = 3000) => {
   return new Promise((resolve, reject) => {
-    let t = setTimeout(() => {
+    const t = setTimeout(() => {
       reject(new Error('Timeout while waiting for event'));
     }, timeout);
 

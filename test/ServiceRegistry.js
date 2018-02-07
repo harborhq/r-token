@@ -1,11 +1,16 @@
-var helpers = require('./helpers');
-var RegulatedToken = artifacts.require('./RegulatedToken.sol');
-var ServiceRegistry = artifacts.require('./ServiceRegistry.sol');
-var MockRegulatorService = artifacts.require('../test/helpers/MockRegulatorService.sol');
+const helpers = require('./helpers');
+const RegulatedToken = artifacts.require('./RegulatedToken.sol');
+const ServiceRegistry = artifacts.require('./ServiceRegistry.sol');
+const MockRegulatorService = artifacts.require('../test/helpers/MockRegulatorService.sol');
 
 contract('ServiceRegistry', async accounts => {
-  let owner, newOwner, hacker, participant;
-  let service, registry;
+  let owner;
+  let newOwner;
+  let hacker;
+  let participant;
+
+  let service;
+  let registry;
 
   beforeEach(async () => {
     owner = accounts[0];
