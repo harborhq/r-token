@@ -1,6 +1,6 @@
-var helpers = require("./helpers");
-var MockRegulatedToken = artifacts.require("../test/helpers/MockRegulatedToken.sol");
-var TokenRegulatorService = artifacts.require("./TokenRegulatorService.sol");
+var helpers = require('./helpers');
+var MockRegulatedToken = artifacts.require('../test/helpers/MockRegulatedToken.sol');
+var TokenRegulatorService = artifacts.require('./TokenRegulatorService.sol');
 
 const PERM_NONE = 0x0;
 const PERM_SEND = 0x1;
@@ -13,13 +13,13 @@ const EDIVIS = 2;
 const ESEND = 3;
 const ERECV = 4;
 
-contract('TokenRegulatorService', async (accounts) => {
+contract('TokenRegulatorService', async accounts => {
   let owner, spender, account, token, service;
 
   beforeEach(async () => {
     owner = accounts[0];
     spender = owner;
-    admin = accounts[1]
+    admin = accounts[1];
     account = accounts[2];
     other = accounts[3];
 
@@ -36,21 +36,27 @@ contract('TokenRegulatorService', async (accounts) => {
       assert.isTrue(!!acct);
       assert.isTrue(acct != accounts[0]);
 
-      await helpers.expectThrow(
-        service[method](...args, { from: acct })
-      );
+      await helpers.expectThrow(service[method](...args, { from: acct }));
     });
-  }
+  };
 
   const assertResult = (ret, success, reason) => {
     assert.equal(ret, reason, 'Assert reason');
-  }
+  };
 
   describe('permissions', () => {
-    onlyOwner('setLocked', () => { return [service, token.address, true] });
-    onlyOwner('setPartialTransfers', () => { return [service, token.address, true] });
-    onlyOwner('setPermission', () => { return [service, token.address, account, 0] });
-    onlyOwner('transferAdmin', () => { return [service, account] });
+    onlyOwner('setLocked', () => {
+      return [service, token.address, true];
+    });
+    onlyOwner('setPartialTransfers', () => {
+      return [service, token.address, true];
+    });
+    onlyOwner('setPermission', () => {
+      return [service, token.address, account, 0];
+    });
+    onlyOwner('transferAdmin', () => {
+      return [service, account];
+    });
 
     describe('setPermission', () => {
       beforeEach(async () => {
@@ -59,9 +65,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
       it('allows admin to invoke', async () => {
         await service.setPermission.call(0, account, 0, { from: admin });
-        await helpers.expectThrow(
-          service.setPermission.call(0, account, 0, { from: other })
-        );
+        await helpers.expectThrow(service.setPermission.call(0, account, 0, { from: other }));
       });
     });
 
@@ -96,7 +100,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
       await helpers.assertEvent(service.LogLockSet(), {
         token: token.address,
-        locked: false
+        locked: false,
       });
     });
   });
@@ -108,7 +112,7 @@ contract('TokenRegulatorService', async (accounts) => {
       await service.setPermission(token.address, account, PERM_TRANSFER);
 
       const decimals = 4,
-            expectedTotalSupply = 2000 * 10**decimals;
+        expectedTotalSupply = 2000 * 10 ** decimals;
 
       await token.setDecimals(decimals);
       await token.mint(owner, expectedTotalSupply);
@@ -123,7 +127,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
       await helpers.assertEvent(service.LogPartialTransferSet(), {
         token: token.address,
-        enabled: true
+        enabled: true,
       });
     });
 
@@ -160,7 +164,7 @@ contract('TokenRegulatorService', async (accounts) => {
 
         await helpers.assertEvent(service.LogTransferAdmin(), {
           oldAdmin: owner,
-          newAdmin: admin
+          newAdmin: admin,
         });
       });
     });
@@ -184,7 +188,7 @@ contract('TokenRegulatorService', async (accounts) => {
       const properties = {
         token: token.address,
         participant: account,
-        permission: PERM_SEND
+        permission: PERM_SEND,
       };
 
       await helpers.assertEvent(service.LogPermissionSet(), properties, (expected, actual) => {

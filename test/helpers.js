@@ -12,10 +12,7 @@ exports.expectThrow = async promise => {
     //       testrpc log actually show an 'invalid jump' event.)
     const outOfGas = error.message.search('out of gas') >= 0;
     const revert = error.message.search('revert') >= 0;
-    assert(
-      invalidOpcode || outOfGas || revert,
-      'Expected throw, got \'' + error + '\' instead',
-    );
+    assert(invalidOpcode || outOfGas || revert, "Expected throw, got '" + error + "' instead");
     return;
   }
   assert.fail('Expected throw not received');
@@ -23,7 +20,6 @@ exports.expectThrow = async promise => {
 
 exports.assertEvent = (event, args, assertEqual = assert.deepEqual, timeout = 3000) => {
   return new Promise((resolve, reject) => {
-
     let t = setTimeout(() => {
       reject(new Error('Timeout while waiting for event'));
     }, timeout);
@@ -37,6 +33,5 @@ exports.assertEvent = (event, args, assertEqual = assert.deepEqual, timeout = 30
         event.stopWatching();
       }
     });
-
   });
-}
+};
