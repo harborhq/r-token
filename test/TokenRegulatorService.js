@@ -28,7 +28,7 @@ contract('TokenRegulatorService', async accounts => {
     other = accounts[3];
 
     service = await TokenRegulatorService.new({ from: owner });
-    token = await MockRegulatedToken.new();
+    token = await MockRegulatedToken.new(service.address);
   });
 
   const onlyOwner = (method, producer) => {
