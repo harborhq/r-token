@@ -45,7 +45,7 @@ Upgradable, token-level trade permission and participant-level trade permissions
 
 ### Upgradable
 
-The `ServiceRegistry` is used to point many `RegulatedToken` smart contracts to a single `RegistryService`. This setup is recommended so that rules and logic implemented by the `RegulatorService` can be upgraded by changing a single `RegulatorService` address held by the `ServiceRegistry`.
+The `ServiceRegistry` is used to point many `RegulatedToken` smart contracts to a single `RegulatorService`. This setup is recommended so that rules and logic implemented by the `RegulatorService` can be upgraded by changing a single `RegulatorService` address held by the `ServiceRegistry`.
 
 <p align="center">
   <img src="https://github.com/harborhq/r-token/raw/master/docs/images/upgradability.png" width="500">
