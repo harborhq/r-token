@@ -9,3 +9,7 @@ cache:
   directories:
   - node_modules
 script: ./travis.sh
+branches:
+  only:
+  - stw/setup-travis
+  - /.*/
