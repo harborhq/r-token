@@ -7,11 +7,10 @@
 # set -e
 
 # Install dependencies
-yarn global add truffle
+yarn add truffle
 
 
 yarn test:ganache > ganache.out & # redirect verbose output to file to reduce clutter
-GANACHE_PID=$!
 
 # Run contract tests
 yarn test

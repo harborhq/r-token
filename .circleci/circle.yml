@@ -6,7 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:7.10
+      - image: circleci/node:8.2.0
 
     working_directory: ~/repo
 
@@ -28,7 +28,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
   test:
     docker:
-      - image: circleci/node:7.10
+      - image: circleci/node:8.2.0
     steps:
       - run:
           name: Test
