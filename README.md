@@ -2,6 +2,8 @@
 
 Smart Contracts for applying regulatory compliance to tokenized securities issuance and trading
 
+[![CircleCI](https://circleci.com/gh/harborhq/r-token/tree/master.svg?style=svg)](https://circleci.com/gh/harborhq/r-token/tree/master)
+
 ## Feedback
 
 We would love your feedback. Have questions, want to contribute, or have general comments? Ping the team and join the conversation at https://gitter.im/harborhq.
