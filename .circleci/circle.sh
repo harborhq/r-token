@@ -16,10 +16,10 @@ GANACHE_PID=$!
 # Run contract tests
 yarn test
 
-# Clean up spawned truffle process
-echo "TRAVIS.SH: Killing ganache pid" $GANACHE_PID
-kill $GANACHE_PID
-
-# Exit
-echo "TRAVIS.SH: DONE. Exiting with status code" $RESULT
-exit $RESULT
+# # Clean up spawned truffle process
+# echo "TRAVIS.SH: Killing ganache pid" $GANACHE_PID
+# kill $GANACHE_PID
+#
+# # Exit
+# echo "TRAVIS.SH: DONE. Exiting with status code" $RESULT
+# exit $RESULT

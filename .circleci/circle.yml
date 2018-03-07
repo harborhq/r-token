@@ -32,7 +32,7 @@ jobs:
     steps:
       - run:
           name: Test
-          command: ./circle.sh
+          command: ./.circleci/circle.sh
 
 workflows:
   version: 2
