@@ -93,7 +93,7 @@ contract RegulatedToken is DetailedERC20, MintableToken {
   }
 
   /**
-   * @notice Retreives the address of the `RegulatorService` that manages this token.
+   * @notice Retrieves the address of the `RegulatorService` that manages this token.
    *
    * @dev This function *MUST NOT* memoize the `RegulatorService` address.  This would
    *      break the ability to upgrade the `RegulatorService`.

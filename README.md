@@ -4,7 +4,7 @@ Smart Contracts for applying regulatory compliance to tokenized securities issua
 
 ## Feedback
 
-We would love your feedback.  Have questions, want to contribute, or have general comments?  Ping the team and join the conversation at https://gitter.im/harborhq.
+We would love your feedback. Have questions, want to contribute, or have general comments? Ping the team and join the conversation at https://gitter.im/harborhq.
 
 ## Description
 
