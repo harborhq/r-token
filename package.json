@@ -15,6 +15,7 @@
   "devDependencies": {},
   "dependencies": {
     "bignumber.js": "^4.1.0",
+    "truffle": "^4.1.0",
     "zeppelin-solidity": "^1.4.0"
   }
 }
