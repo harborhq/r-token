@@ -7,7 +7,7 @@
 # set -e
 
 # Install dependencies
-yarn install -g truffle
+yarn global add truffle
 
 
 yarn test:ganache > ganache.out & # redirect verbose output to file to reduce clutter
