@@ -6,7 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:8.2.0
+      - image: circleci/node:7.4.0
 
     working_directory: ~/repo
 
@@ -28,11 +28,14 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
   test:
     docker:
-      - image: circleci/node:8.2.0
+      - image: circleci/node:7.4.0
     steps:
       - run:
-          name: Test
-          command: ./.circleci/circle.sh
+          name: Run Ganache
+          command: yarn test:ganache
+      - run:
+          name: Run Test
+          command: yarn test
 
 workflows:
   version: 2
