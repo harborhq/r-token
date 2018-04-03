@@ -7,13 +7,15 @@
     "test": "test"
   },
   "scripts": {
-    "test": "truffle test"
+    "test": "node ./node_modules/truffle/build/cli.bundled.js test"
   },
   "author": "Bob Remeika",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "truffle": "^4.1.5"
+  },
   "dependencies": {
     "bignumber.js": "^4.1.0",
-    "zeppelin-solidity": "^1.4.0"
+    "zeppelin-solidity": "^1.8.0"
   }
 }

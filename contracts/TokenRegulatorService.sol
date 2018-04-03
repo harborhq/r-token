@@ -1,7 +1,7 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.21;
 
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
-import 'zeppelin-solidity/contracts/token/DetailedERC20.sol';
+import 'zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
 import './RegulatedToken.sol';
 import './RegulatorService.sol';
 
@@ -93,7 +93,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   function setLocked(address _token, bool _locked) onlyOwner public {
     settings[_token].locked = _locked;
 
-    LogLockSet(_token, _locked);
+    emit LogLockSet(_token, _locked);
   }
 
   /**
@@ -106,7 +106,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   function setPartialTransfers(address _token, bool _enabled) onlyOwner public {
    settings[_token].partialTransfers = _enabled;
 
-   LogPartialTransferSet(_token, _enabled);
+   emit LogPartialTransferSet(_token, _enabled);
   }
 
   /**
@@ -123,7 +123,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
   function setPermission(address _token, address _participant, uint8 _permission) onlyAdmins public {
     participants[_token][_participant] = _permission;
 
-    LogPermissionSet(_token, _participant, _permission);
+    emit LogPermissionSet(_token, _participant, _permission);
   }
 
   /**
@@ -137,7 +137,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
     address oldAdmin = admin;
     admin = newAdmin;
 
-    LogTransferAdmin(oldAdmin, newAdmin);
+    emit LogTransferAdmin(oldAdmin, newAdmin);
   }
 
   /**
