@@ -7,6 +7,7 @@
     "test": "test"
   },
   "scripts": {
+    "compile": "node ./node_modules/truffle/build/cli.bundled.js compile",
     "test": "node ./node_modules/truffle/build/cli.bundled.js test"
   },
   "author": "Bob Remeika",
