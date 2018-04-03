@@ -7,11 +7,16 @@
     "test": "test"
   },
   "scripts": {
-    "test": "truffle test"
+    "test": "truffle test",
+    "test:ganache": "yarn ganache-cli -m \"$RTOKEN_DEVELOPMENT_MNEMONIC\" -e 100"
   },
   "author": "Bob Remeika",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "ganache-cli": "^6.1.0",
+    "truffle-hdwallet-provider": "^0.0.3",
+    "web3": "^1.0.0-beta.33"
+  },
   "dependencies": {
     "bignumber.js": "^4.1.0",
     "zeppelin-solidity": "^1.4.0"
