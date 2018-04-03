@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.21;
 
 import './RegulatorService.sol';
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
@@ -45,6 +45,6 @@ contract ServiceRegistry is Ownable {
   function replaceService(address _service) onlyOwner withContract(_service) public {
     address oldService = service;
     service = _service;
-    ReplaceService(oldService, service);
+    emit ReplaceService(oldService, service);
   }
 }

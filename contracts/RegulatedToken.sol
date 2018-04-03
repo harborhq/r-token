@@ -1,7 +1,7 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.21;
 
-import 'zeppelin-solidity/contracts/token/DetailedERC20.sol';
-import 'zeppelin-solidity/contracts/token/MintableToken.sol';
+import 'zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
+import 'zeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
 import './ServiceRegistry.sol';
 import './RegulatorService.sol';
 
@@ -85,9 +85,9 @@ contract RegulatedToken is DetailedERC20, MintableToken {
    * @return `true` if the check was successful and `false` if unsuccessful
    */
   function _check(address _from, address _to, uint256 _value) private returns (bool) {
-    var reason = _service().check(this, msg.sender, _from, _to, _value);
+    uint8 reason = _service().check(this, msg.sender, _from, _to, _value);
 
-    CheckStatus(reason, msg.sender, _from, _to, _value);
+    emit CheckStatus(reason, msg.sender, _from, _to, _value);
 
     return reason == 0;
   }
