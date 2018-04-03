@@ -8,7 +8,8 @@
   },
   "scripts": {
     "compile": "node ./node_modules/truffle/build/cli.bundled.js compile",
-    "test": "node ./node_modules/truffle/build/cli.bundled.js test"
+    "test": "node ./node_modules/truffle/build/cli.bundled.js test",
+    "test:single": "node ./node_modules/truffle/build/cli.bundled.js test test/helpers/MockRegulatedToken.sol test/helpers/MockRegulatorService.sol"
   },
   "author": "Bob Remeika",
   "license": "MIT",
