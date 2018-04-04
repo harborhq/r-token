@@ -13,6 +13,7 @@ console.log('STARTING');
 const Web3 = require('web3');
 const TestRegulatedTokenJson = require('../build/contracts/TestRegulatedToken');
 const BigNumber = require('bignumber.js');
+const HDWalletProvider = require('truffle-hdwallet-provider');
 
 /*******************************************************************************
  * Input validation & Init
@@ -47,16 +48,32 @@ const configs = {
       'SLVR': '0x6d966540214a7a55f61244e346d0ae6033ace4f8',
       'GOLD': '0x3b6b17477763ccb313a55e87fd104c37e3e01f33'
     }
+  },
+  kovan: {
+    tokenAddresses: {
+      'CPPR': '0x5cdcc989560693e845060d271399216d8ab00c25',
+      'SLVR': '0x9843430d81290c90701bd655a7f19222b1de1f5f',
+      'GOLD': '0x88c3f6e2ddd8e65ec548197f2670623c5d876459'
+    }
   }
 };
+
 const config = configs[env];
 ensure(config, 'No config');
 
 const tokenAddress = config.tokenAddresses[tokenSymbol];
 ensure(tokenAddress, 'No tokenAddress');
 
-// TODO pick wallet based on env
-var provider = new Web3.providers.HttpProvider('http://localhost:8545')
+let provider;
+if (env === 'kovan') {
+  const kovanMnemonic = process.env['RTOKEN_KOVAN_MNEMONIC'];
+  ensure(kovanMnemonic, 'No kovanMnemonic');
+  const infuraKey = process.env['INFURA_KEY'];
+  ensure(infuraKey, 'No infuraKey');
+  provider = new HDWalletProvider(kovanMnemonic, `https://kovan.infura.io/${infuraKey}`);
+} else {
+  provider = new Web3.providers.HttpProvider('http://localhost:8545');
+}
 const web3 = new Web3(provider);
 
 /*******************************************************************************
@@ -75,7 +92,8 @@ const web3 = new Web3(provider);
     const toMintAmount = web3.utils.toWei(new BigNumber(numberOfTokens).toString(), 'ether');
     console.log(`mintToWallet.${tokenSymbol}.toMintAmount:`, toMintAmount);
 
-    await token.methods.mint(mintToWallet, toMintAmount).send();
+    const transaction = await token.methods.mint(mintToWallet, toMintAmount).send();
+    console.log('transaction:', transaction.status, transaction.transactionHash);
 
     const tokenBalance = await token.methods.balanceOf(mintToWallet).call({from: myAddress})
     console.log(`mintToWallet.${tokenSymbol}.balance:`, tokenBalance);
