@@ -5,8 +5,8 @@ const TestRegulatorService = artifacts.require('./TestRegulatorService.sol');
 contract('TestRegulatedToken', async function(accounts) {
   let regulator;
   let token;
-  const owner = accounts[0];
-  const notOwner = accounts[1];
+  const owner = accounts[0];     // Owner of the TestRegulatedToken
+  const notOwner = accounts[1];  // Not the owner of the TestRegulatedToken
   const fromOwner = { from: owner };
   const fromNotOwner = { from: notOwner };
 
@@ -18,15 +18,11 @@ contract('TestRegulatedToken', async function(accounts) {
     token = await TestRegulatedToken.new(registry.address, 'Test', 'TEST');
   });
 
-  const assertBalances = async balances => {
-    assert.equal(balances.owner, (await token.balanceOf.call(owner)).valueOf());
-    assert.equal(balances.notOwner, (await token.balanceOf.call(notOwner)).valueOf());
-  };
-
   describe('minting', () => {
     beforeEach(async () => {
       assert.equal((await token.owner.call()).valueOf(), owner);
-      await assertBalances({ owner: 0, notOwner: 0 });
+      assert.equal((await token.balanceOf.call(owner)).valueOf(), 0);
+      assert.equal((await token.balanceOf.call(notOwner)).valueOf(), 0);
     });
 
     it('lets people other than the token owner mint', async () => {
