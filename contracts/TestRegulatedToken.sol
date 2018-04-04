@@ -3,7 +3,10 @@ pragma solidity ^0.4.18;
 import './RegulatedToken.sol';
 
 /**
- * Anyone can mint() a TestRegulatedToken.
+ * TestRegulatedToken is a RegulatedToken meant for testing purposes.
+ * Developers can mint an unlimited number of TestRegulatedTokens.
+ * TestRegulatedToken is meant to be instantiated with a ServiceRegistry
+ * that points to an instance of TestRegulatorService.
  */
 contract TestRegulatedToken is RegulatedToken {
   function TestRegulatedToken(ServiceRegistry _registry, string _name, string _symbol) public
