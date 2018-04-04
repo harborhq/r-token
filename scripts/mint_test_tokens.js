@@ -1,12 +1,15 @@
-// What:
-// Mints TestRegulatorTokens to specified wallet address.
-// Usage:
-// node scripts/mint_test_tokens.js env numberOfTokens tokenSymbol toWalletAddress
-// Example:
-// node scripts/mint_test_tokens.js development 100 CPPR 0xd4afd5525ada1efa8ae661be1a0b373eb9e68498
+/*******************************************************************************
+ * What:
+ * Mints TestRegulatorTokens to specified wallet address.
+ *
+ * Usage:
+ * node scripts/mint_test_tokens.js env numberOfTokens tokenSymbol toWalletAddress
+ *
+ * Example:
+ * node scripts/mint_test_tokens.js development 100 CPPR 0xd4afd5525ada1efa8ae661be1a0b373eb9e68498
+ ******************************************************************************/
 
 console.log('STARTING');
-const HDWalletProvider = require('truffle-hdwallet-provider');
 const Web3 = require('web3');
 const TestRegulatedTokenJson = require('../build/contracts/TestRegulatedToken');
 const BigNumber = require('bignumber.js');
@@ -52,13 +55,8 @@ ensure(config, 'No config');
 const tokenAddress = config.tokenAddresses[tokenSymbol];
 ensure(tokenAddress, 'No tokenAddress');
 
-const mnemonicVar = `RTOKEN_${env.toUpperCase()}_MNEMONIC`;
-const mnemonic = process.env[mnemonicVar]
-console.log('mnemonic:', mnemonic)
-ensure(mnemonic, 'No mnemonic for', mnemonicVar);
-
 // TODO pick wallet based on env
-var provider = new HDWalletProvider(mnemonic, 'http://localhost:8545');
+var provider = new Web3.providers.HttpProvider('http://localhost:8545')
 const web3 = new Web3(provider);
 
 /*******************************************************************************
