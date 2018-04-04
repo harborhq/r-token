@@ -1,5 +1,5 @@
 # TestRegulatedTokens
-Normal R-Tokens should only be minted under carefully regulated conditions, such as an ICO. Normal R-Tokens also restrict `ERC20.transfer()` and `ERC20.transferFrom()` to insure that trades comply with government regulations or other business needs.
+Normal R-Tokens should only be minted under carefully regulated conditions, such as an ICO. Normal R-Tokens also restrict `ERC20.transfer()` and `ERC20.transferFrom()` to ensure that trades comply with government regulations or other business needs.
 
 TestRegulatedTokens can be minted by developers whenever they want.
 
