@@ -2,6 +2,10 @@ pragma solidity ^0.4.18;
 
 import './RegulatorService.sol';
 
+/**
+ * TestRegulatorService is a RegulatorService meant for testing purposes.
+ * It returns check() reason codes based on the amount of the transaction.
+ */
 contract TestRegulatorService is RegulatorService  {
   uint8 constant private SUCCESS = 0;  /* 0 <= AMOUNT < 10 */
   uint8 constant private ELOCKED = 1;  /* 10 <= AMOUNT < 20 */
