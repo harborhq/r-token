@@ -116,9 +116,9 @@ Normal R-Tokens should only be minted under carefully regulated conditions, such
 
 ### TestRegulatedTokens can be minted by developers whenever they want.
 Kovan has three test tokens already deployed to it:
-* Copper(CPPR)
-* Silver(SLVR)
-* Gold(GOLD)
+* Copper - CPPR - 0x5cdcc989560693e845060d271399216d8ab00c25
+* Silver - SLVR - 0x9843430d81290c90701bd655a7f19222b1de1f5f
+* Gold - GOLD - 0x88c3f6e2ddd8e65ec548197f2670623c5d876459
 
 Mint `100` `CPPR` tokens to address `0xd4afd5525ada1efa8ae661be1a0b373eb9e68498` on your local `development` environment(localhost:8545).
 ```
