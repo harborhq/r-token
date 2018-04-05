@@ -115,6 +115,7 @@ truffle migrate
 Normal R-Tokens should only be minted under carefully regulated conditions, such as an ICO. Normal R-Tokens also restrict `ERC20.transfer()` and `ERC20.transferFrom()` to ensure that trades comply with government regulations or other business needs.
 
 ### TestRegulatedTokens can be minted by developers whenever they want.
+Kovan has three test tokens already deployed to it: Copper(CPPR), Silver(SLVR), and Gold(GOLD).
 
 Mint `100` `CPPR` tokens to address `0xd4afd5525ada1efa8ae661be1a0b373eb9e68498` on your local `development` environment(localhost:8545).
 ```
