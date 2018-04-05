@@ -152,7 +152,7 @@ contract TokenRegulatorService is RegulatorService, Ownable {
    * @param  _to The address of the receiver account
    * @param  _amount The quantity of the token to trade
    *
-   * @return `true` if the trade should be approved and  `false` if the trade should not be approved
+   * @return `true` if the trade should be approved and `false` if the trade should not be approved
    */
   function check(address _token, address _spender, address _from, address _to, uint256 _amount) public returns (uint8) {
     if (settings[_token].locked) {
