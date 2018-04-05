@@ -87,10 +87,10 @@ The privileges for each role are defined below:
 | Owner      | Can Mint        | Transfer Owner / Replace Service | Update Token-Level Settings / Transfer Ownership / Transfer Admin |
 | Admin      | N/A             | N/A                              | Update Participant-Level Settings                                 |
 
-#Developers
+# Developers
 The R-Token project was created with [Truffle](http://truffleframework.com/) so all truffle commands will work.
 
-##Setup
+## Setup
 1. Install dependencies. `yarn install`
 1. Pick a 12 word mnemonic and put this in your bash profile so you can launch ganache-cli with a consistent seed.
    ```
@@ -114,7 +114,7 @@ truffle migrate
 ## TestRegulatedTokens
 Normal R-Tokens should only be minted under carefully regulated conditions, such as an ICO. Normal R-Tokens also restrict `ERC20.transfer()` and `ERC20.transferFrom()` to ensure that trades comply with government regulations or other business needs.
 
-TestRegulatedTokens can be minted by developers whenever they want.
+### TestRegulatedTokens can be minted by developers whenever they want.
 
 Mint `100` `CPPR` tokens to address `0xd4afd5525ada1efa8ae661be1a0b373eb9e68498` on your local `development` environment(localhost:8545).
 ```
@@ -126,7 +126,7 @@ Mint `100` `GOLD` tokens to address `0xd4afd5525ada1efa8ae661be1a0b373eb9e68498`
 node scripts/mint_test_tokens.js kovan 100 GOLD 0xd4afd5525ada1efa8ae661be1a0b373eb9e68498
 ```
 
-Developers can control if TestRegulatedTokens transfers succeed or fail by adjusting the transaction amount.
+### Developers can control if TestRegulatedToken transfers succeed or fail by adjusting the transaction amount.
 * Approved: 0 >= amount < 10
 * Error, Token is locked: 10 >= amount < 20
 * Error, Token is not divisible: 20 >= amount < 30
