@@ -35,3 +35,24 @@ exports.assertEvent = (event, args, assertEqual = assert.deepEqual, timeout = 30
     });
   });
 };
+
+/**
+ * @return true if the regulator will allow the trade.
+ */
+exports.checkResult = async (regulator, tokenAddress, spender, sender, receiver, amount) => {
+  const reason = await regulator.check.call(tokenAddress, spender, sender, receiver, amount);
+  return reason == 0;
+};
+
+/**
+ * Assert all addresses have the given balance for the given token.
+ * @param token The token to check balances for.
+ * @param balances Object where keys are addresses and values are the expected number of tokens for that address.
+ */
+exports.assertBalances = async (token, balances) => {
+  for (let addr in balances) {
+    const expectedBal = balances[addr];
+    const actualBal = await token.balanceOf.call(addr);
+    assert.equal(actualBal.toNumber(), expectedBal);
+  }
+};

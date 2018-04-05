@@ -8,6 +8,7 @@ const MockRegulatorService = artifacts.require('../test/helpers/MockRegulatorSer
 contract('RegulatedToken', async function(accounts) {
   let regulator;
   let token;
+  let assertBalances;
 
   const owner = accounts[0];
   const receiver = accounts[1];
@@ -22,16 +23,15 @@ contract('RegulatedToken', async function(accounts) {
 
     token = await RegulatedToken.new(registry.address, 'Test', 'TEST');
 
+    assertBalances = async (ownerBal, receiverBal) => {
+      await helpers.assertBalances(token, { [owner]: ownerBal, [receiver]: receiverBal });
+    }
+
     await token.mint(owner, 100);
     await token.finishMinting();
 
-    await assertBalances({ owner: 100, receiver: 0 });
+    await assertBalances(100, 0);
   });
-
-  const assertBalances = async balances => {
-    assert.equal(balances.owner, (await token.balanceOf.call(owner)).valueOf());
-    assert.equal(balances.receiver, (await token.balanceOf.call(receiver)).valueOf());
-  };
 
   const assertCheckStatusEvent = async (event, params) => {
     const p = Object.assign({}, params, {
@@ -48,11 +48,6 @@ contract('RegulatedToken', async function(accounts) {
     });
   };
 
-  const checkResult = async (tokenAddress, spender, sender, receiver, amount) => {
-    const reason = await regulator.check.call(tokenAddress, spender, sender, receiver, amount);
-    return reason == 0;
-  };
-
   describe('constructor', () => {
     it('requires a non-zero registry argument', async () => {
       await helpers.expectThrow(RegulatedToken.new(0, 'TEST', 'Test'));
@@ -63,13 +58,13 @@ contract('RegulatedToken', async function(accounts) {
     describe('when the transfer is NOT approved by the regulator', () => {
       beforeEach(async () => {
         await regulator.setCheckResult(false, 255);
-        assert.isFalse(await checkResult(token.address, owner, owner, receiver, 0));
-        await assertBalances({ owner: 100, receiver: 0 });
+        assert.isFalse(await helpers.checkResult(regulator, token.address, owner, owner, receiver, 0));
+        await assertBalances(100, 0);
       });
 
       it('returns false', async () => {
         assert.isFalse(await token.transfer.call(receiver, 100, fromOwner));
-        await assertBalances({ owner: 100, receiver: 0 });
+        await assertBalances(100, 0);
       });
 
       it('triggers a CheckStatus event and does NOT transfer funds', async () => {
@@ -77,7 +72,7 @@ contract('RegulatedToken', async function(accounts) {
         const value = 25;
 
         await token.transfer(receiver, value, fromOwner);
-        await assertBalances({ owner: 100, receiver: 0 });
+        await assertBalances(100, 0);
         await assertCheckStatusEvent(event, {
           reason: 255,
           spender: owner,
@@ -91,15 +86,14 @@ contract('RegulatedToken', async function(accounts) {
     describe('when the transfer is approved by the regulator', () => {
       beforeEach(async () => {
         await regulator.setCheckResult(true, 0);
-        assert.isTrue(await checkResult(token.address, owner, owner, receiver, 0));
-        await assertBalances({ owner: 100, receiver: 0 });
+        assert.isTrue(await helpers.checkResult(regulator, token.address, owner, owner, receiver, 0));
+        await assertBalances(100, 0);
       });
 
       it('returns true', async () => {
         assert.isTrue(await token.transfer.call(receiver, 100, fromOwner));
-
         // note: calls don't modify state
-        await assertBalances({ owner: 100, receiver: 0 });
+        await assertBalances(100, 0);
       });
 
       it('triggers a CheckStatus event and transfers funds', async () => {
@@ -107,7 +101,7 @@ contract('RegulatedToken', async function(accounts) {
         const value = 25;
 
         await token.transfer(receiver, value, fromOwner);
-        await assertBalances({ owner: 75, receiver: value });
+        await assertBalances(75, value);
         await assertCheckStatusEvent(event, {
           reason: 0,
           spender: owner,
@@ -124,14 +118,14 @@ contract('RegulatedToken', async function(accounts) {
       beforeEach(async () => {
         await regulator.setCheckResult(false, 255);
 
-        assert.isFalse(await checkResult(token.address, owner, owner, receiver, 0));
+        assert.isFalse(await helpers.checkResult(regulator, token.address, owner, owner, receiver, 0));
         await token.approve(receiver, 25, fromOwner);
-        await assertBalances({ owner: 100, receiver: 0 });
+        await assertBalances(100, 0);
       });
 
       it('returns false', async () => {
         assert.isFalse(await token.transferFrom.call(owner, receiver, 20, fromReceiver));
-        await assertBalances({ owner: 100, receiver: 0 });
+        await assertBalances(100, 0);
       });
 
       it('triggers a CheckStatus event and does NOT transfer funds', async () => {
@@ -140,7 +134,7 @@ contract('RegulatedToken', async function(accounts) {
 
         await token.transferFrom(owner, receiver, value, fromOwner);
 
-        await assertBalances({ owner: 100, receiver: 0 });
+        await assertBalances(100, 0);
         await assertCheckStatusEvent(event, {
           reason: 255,
           spender: owner,
@@ -155,16 +149,15 @@ contract('RegulatedToken', async function(accounts) {
       beforeEach(async () => {
         await regulator.setCheckResult(true, 0);
 
-        assert.isTrue(await checkResult(token.address, owner, owner, receiver, 0));
+        assert.isTrue(await helpers.checkResult(regulator, token.address, owner, owner, receiver, 0));
         await token.approve(receiver, 25, fromOwner);
-        await assertBalances({ owner: 100, receiver: 0 });
+        await assertBalances(100, 0);
       });
 
       it('returns true', async () => {
         assert.isTrue(await token.transferFrom.call(owner, receiver, 25, fromReceiver));
-
         // note: calls don't modify state
-        await assertBalances({ owner: 100, receiver: 0 });
+        await assertBalances(100, 0);
       });
 
       it('triggers a CheckStatus event and transfers funds', async () => {
@@ -172,7 +165,7 @@ contract('RegulatedToken', async function(accounts) {
         const value = 20;
 
         await token.transferFrom(owner, receiver, 20, fromReceiver);
-        await assertBalances({ owner: 80, receiver: 20 });
+        await assertBalances(80, 20);
         await assertCheckStatusEvent(event, {
           reason: 0,
           spender: receiver,
@@ -182,7 +175,7 @@ contract('RegulatedToken', async function(accounts) {
         });
 
         await token.transferFrom(owner, receiver, 5, fromReceiver);
-        await assertBalances({ owner: 75, receiver: 25 });
+        await assertBalances(75, 25);
       });
     });
   });

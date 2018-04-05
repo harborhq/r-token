@@ -1,6 +1,9 @@
 const TestRegulatedToken = artifacts.require('./TestRegulatedToken.sol');
 const ServiceRegistry = artifacts.require('./ServiceRegistry.sol');
 const TestRegulatorService = artifacts.require('./TestRegulatorService.sol');
+const checkResult = require('./helpers').checkResult;
+const helperAssertBalances = require('./helpers').assertBalances;
+
 
 const SUCCESS = 0;  /* 0  <= AMOUNT < 10 */
 const ELOCKED = 1;  /* 10 <= AMOUNT < 20 */
@@ -13,26 +16,16 @@ contract('TestRegulatorService', async accounts => {
   const spender = owner;
   const receiver = accounts[1];
   const fromOwner = { from: owner };
-  const fromReceiver = { from: receiver };
 
   let regulator;
   let token;
+  let assertBalances;
 
   beforeEach(async () => {
     regulator = await TestRegulatorService.new({ from: owner });
     const registry = await ServiceRegistry.new(regulator.address);
     token = await TestRegulatedToken.new(registry.address, 'Test', 'TEST');
   });
-
-  const assertBalances = async balances => {
-    assert.equal(balances.owner, (await token.balanceOf.call(owner)).valueOf());
-    assert.equal(balances.receiver, (await token.balanceOf.call(receiver)).valueOf());
-  };
-
-  const checkResult = async (tokenAddress, spender, sender, receiver, amount) => {
-    const reason = await regulator.check.call(tokenAddress, spender, sender, receiver, amount);
-    return reason == 0;
-  };
 
   describe('check', () => {
     it('returns SUCCESS when amount is between zero and ten', async () => {
@@ -58,33 +51,35 @@ contract('TestRegulatorService', async accounts => {
 
   describe('TestRegulatedToken.transfer() with TestRegulatorService.check()', () => {
     beforeEach(async () => {
+      assertBalances = async (ownerBal, receiverBal) => {
+        await helperAssertBalances(token, { [owner]: ownerBal, [receiver]: receiverBal });
+      }
+
       await token.mint(owner, 100);
       await token.finishMinting();
 
-      await assertBalances({ owner: 100, receiver: 0 });
+      await assertBalances(100, 0);
     });
 
     describe('when the transfer is simulated to be NOT APPROVED by the regulator(by entering a transfer amount from 10-50)', () => {
       beforeEach(async () => {
-        await assertBalances({ owner: 100, receiver: 0 });
-        assert.isFalse(await checkResult(token.address, owner, owner, receiver, 15));
+        assert.isFalse(await checkResult(regulator, token.address, owner, owner, receiver, 15));
       });
 
-      it('returns false', async () => {
+      it('does NOT transfer tokens', async () => {
         await token.transfer(receiver, 15, fromOwner);
-        await assertBalances({ owner: 100, receiver: 0 });
+        await assertBalances(100, 0);
       });
     });
 
     describe('when the transfer is simulated to be APPROVED by the regulator(by entering a transfer amount from 0-10)', () => {
       beforeEach(async () => {
-        await assertBalances({ owner: 100, receiver: 0 });
-        assert.isTrue(await checkResult(token.address, owner, owner, receiver, 5));
+        assert.isTrue(await checkResult(regulator, token.address, owner, owner, receiver, 5));
       });
 
-      it('returns false', async () => {
+      it('transfers tokens', async () => {
         await token.transfer(receiver, 5, fromOwner);
-        await assertBalances({ owner: 95, receiver: 5 });
+        await assertBalances(95, 5);
       });
     });
   });
